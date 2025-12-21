@@ -1,0 +1,6 @@
+package(default_visibility = ["//visibility:public"])
+
+filegroup(
+    name = "recap_src",
+    srcs = glob(["src/**/*.rs"]) + ["Cargo.toml"],
+)
