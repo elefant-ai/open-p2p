@@ -1,0 +1,13 @@
+__pycache__
+wandb/
+.pytest_cache/
+.venv
+.ruff_cache
+.DS_Store
+.sesskey
+logs.txt
+logs/
+yt_videos/
+target
+data_folder/
+data_folder_validation/

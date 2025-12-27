@@ -1,0 +1,144 @@
+[project]
+classifiers = ["Private :: Do Not Upload"]
+name = "elefant"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = "==3.13.2"
+dependencies = [
+    "boto3>=1.35.80",
+    "flask-cors>=5.0.0",
+    "flask>=3.1.0",
+    "torch; sys_platform != 'darwin' and platform_machine != 'aarch64'",
+    "torchvision; sys_platform != 'darwin' and platform_machine != 'aarch64'",
+    "torchcodec>=0.6.0; sys_platform == 'linux'",
+    "attrs>=24.2.0",
+    "llvmlite>=0.44.0",
+    "requests>=2.32.3",
+    "pydantic-yaml>=1.4.0",
+    "protobuf>=5.29.2",
+    "wandb>=0.19.1",
+    "black>=24.10.0",
+    "dependency>=0.0.3",
+    "doy>=1.9.2",
+    "omegaconf>=2.3.0",
+    "funcy>=2.0",
+    "tensordict>=0.6.2; sys_platform == 'linux'",
+    "ruff>=0.8.4",
+    "torchinfo>=1.8.0; sys_platform != 'darwin'",
+    "jupyter-http-over-ws>=0.0.8",
+    "google-api-python-client>=2.157.0",
+    "google-generativeai>=0.8.3",
+    "umap-learn[plot]>=0.5.7",
+    "ipdb>=0.13.13",
+    "debugpy>=1.8.11",
+    "vector-quantize-pytorch>=1.21.1; sys_platform != 'darwin'",
+    "gradio>=5.10.0",
+    "pyglet==1.5.27",
+    "pytorchvideo @ git+https://github.com/facebookresearch/pytorchvideo.git@6cdc929315aab1b5674b6dcf73b16ec99147735f ; sys_platform != 'darwin'",
+    "pytest>=8.3.4",
+    "pytest-rerunfailures>=14.0",
+    "grpcio-tools>=1.70.0",
+    "torchmetrics>=1.6.1; sys_platform != 'darwin'",
+    "protoletariat>=3.3.9",
+    "lightning>=2.5.0; sys_platform != 'darwin'",
+    "s3fs>=2025.2.0",
+    "jsonlines>=4.0.0",
+    "tensorboard>=2.19.0",
+    "torch-tb-profiler>=0.4.3; sys_platform != 'darwin'",
+    "einops==0.8.0",
+    "elefant_rust",
+    "python-fasthtml>=0.12.6",
+    "monsterui>=1.0.11",
+    "triton; sys_platform == 'linux'",
+    "pytorch-triton; sys_platform == 'linux'",
+    "psycopg[binary]==3.2.6",
+    "psycopg-pool==3.2.6",
+    "kornia==0.7.3",
+    "transformers @ git+https://github.com/huggingface/transformers@v4.56.0-Embedding-Gemma-preview",
+    "sentence-transformers >= 2.6.0",
+    "accelerate",
+    "deepgram-sdk",
+]
+
+[project.optional-dependencies]
+model-export = [
+    "torch-tensorrt>=2.6.0; sys_platform == 'linux' or sys_platform == 'win32'",
+    "tensorrt>=10.7.0.post1; sys_platform == 'linux' or sys_platform == 'win32'",
+    "pycuda>=2025.1; sys_platform != 'darwin'",
+    "cuda-python>=12.8.0; sys_platform != 'darwin'",
+]
+
+simulator = [
+    "playwright>=1.52.0",
+]
+
+[tool.uv]
+environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'win32' and platform_machine == 'x86_64'",
+    "sys_platform == 'darwin'",
+]
+
+[tool.uv.sources]
+torchcodec = [
+     { index = "pytorch-cpu-stable", marker = "sys_platform == 'linux'" },
+]
+elefant_rust = { workspace = true }
+torch = [
+    {index = "pytorch-cuda-stable", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+    {index = "pytorch-cpu-stable", marker = "sys_platform == 'darwin'" }
+]
+torchaudio = [
+    {index = "pytorch-cuda-stable", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+    {index = "pytorch-cpu-stable", marker = "sys_platform == 'darwin'" }
+]
+torchvision = [
+    {index = "pytorch-cuda-stable", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+    {index = "pytorch-cpu-stable", marker = "sys_platform == 'darwin'" }
+]
+pytorch-triton = [
+    {index = "pytorch-cuda-stable", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+    {index = "pytorch-cpu-stable", marker = "sys_platform == 'darwin'" }
+]
+torch-tensorrt = [
+    {index = "pytorch-cuda-stable", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+]
+
+[tool.uv.workspace]
+members = [
+    ".",               # Refers to the current project (elefant)
+    "elefant_rust",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu-stable"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cuda-stable"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[build-system]
+requires = ["hatchling>=1.21.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[project.scripts]
+start-experiment = "elefant.launcher.start_experiment:main"
+check-new-data = "elefant.data.check.main:main"
+update-employee-index = "elefant.data.index.script.update_employee_index:main"
+data-stats = "elefant.data.index.get_stats:main"
+godot-eval = "elefant.godot.run:main"
+
+# Run with simulator extra
+dos-games = "elefant.simulator.run:main"
+
+[tool.pytest.ini_options]
+markers = [
+    "flaky: marks tests as flaky (deselect with '-m \"not flaky\"')",
+]
