@@ -20,10 +20,14 @@ uv run elefant/policy_model/train.py \
   --config config/policy_model/dev.yaml
 ```
 
-## Inference (TBD)
+## Inference
 1. First, download the model checkpoints, the checkpoints for 150M and 1.2B models are available now
 ```bash
 uv run huggingface-cli download guaguaa/p2p-150M --local-dir ./checkpoints/150M/
+```
+
+```bash
+uv run huggingface-cli download guaguaa/p2p-1.2B --local-dir ./checkpoints/1200M/
 ```
 
 Run inference with a trained checkpoints:

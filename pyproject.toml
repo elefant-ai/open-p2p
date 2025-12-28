@@ -47,6 +47,7 @@ dependencies = [
     "tensorboard>=2.19.0",
     "torch-tb-profiler>=0.4.3; sys_platform != 'darwin'",
     "einops==0.8.0",
+    "elefant_rust",
     "python-fasthtml>=0.12.6",
     "monsterui>=1.0.11",
     "triton; sys_platform == 'linux'",
@@ -83,6 +84,7 @@ environments = [
 torchcodec = [
      { index = "pytorch-cpu-stable", marker = "sys_platform == 'linux'" },
 ]
+elefant_rust = { workspace = true }
 torch = [
     {index = "pytorch-cuda-stable", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
     {index = "pytorch-cpu-stable", marker = "sys_platform == 'darwin'" }
@@ -106,6 +108,7 @@ torch-tensorrt = [
 [tool.uv.workspace]
 members = [
     ".",               # Refers to the current project (elefant)
+    "elefant_rust",
 ]
 
 [[tool.uv.index]]
