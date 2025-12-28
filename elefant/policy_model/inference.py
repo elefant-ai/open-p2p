@@ -30,7 +30,7 @@ from elefant.policy_model.stage3_finetune import (
 )
 from elefant.torch import pytorch_setup
 from elefant.policy_model.config import LightningPolicyConfig
-from elefant.data.rescale import resize_image_for_model
+from elefant.data.video_proto_dataset import resize_image_for_model
 from elefant.data.proto import shared_pb2
 import collections
 from PIL import Image
@@ -495,6 +495,7 @@ class InferenceServer(UnixDomainSocketInferenceServer):
         model_records_path: str = None,
         input_records_path: str = None,
         metrics_window_seconds: float = 60.0,
+        checkpoint_path: str = None,
     ):
         super().__init__(uds_path=UDS_PATH)
         self.shared_text_state = SharedTextInputState()
@@ -518,9 +519,7 @@ class InferenceServer(UnixDomainSocketInferenceServer):
             logging.info("Using randomly initialized weights (no checkpoint loading)")
             checkpoint_path = None
         else:
-            with log_time("Find latest checkpoint"):
-                checkpoint_path = config.inference.checkpoint_path
-                logging.info(f"Loading model from {checkpoint_path}")
+            logging.info(f"Loading model from {checkpoint_path}")
 
         self._setup_device()
         dummy_trainer = pl.Trainer(
@@ -1024,6 +1023,7 @@ def serve_model(
     model_records_path: str = None,
     input_records_path: str = None,
     metrics_window_seconds: float = 60.0,
+    checkpoint_path: str = None,
 ):
     logging.basicConfig(level=logging.INFO, force=True)
 
@@ -1037,6 +1037,7 @@ def serve_model(
         model_records_path=model_records_path,
         input_records_path=input_records_path,
         metrics_window_seconds=metrics_window_seconds,
+        checkpoint_path=checkpoint_path,
     )
 
     # Setup signal handlers for non-asyncio contexts
@@ -1076,6 +1077,7 @@ def _main():
     parser.add_argument("--use_full_inference", action="store_true", default=False)
     parser.add_argument("--no-compile", action="store_true")
     parser.add_argument("--use_manual_sampling", action="store_true", default=False)
+    parser.add_argument("--checkpoint_path", type=str, default=None)
     parser.add_argument(
         "--use_random_weights",
         action="store_true",
@@ -1129,6 +1131,7 @@ def _main():
             model_records_path=args.model_records_path,
             input_records_path=args.input_records_path,
             metrics_window_seconds=args.metrics_window_seconds,
+            checkpoint_path=args.checkpoint_path
         )
 
 

@@ -12,12 +12,6 @@ supported-markers = [
     "sys_platform == 'darwin'",
 ]
 
-[manifest]
-members = [
-    "elefant",
-    "elefant-rust",
-]
-
 [[package]]
 name = "absl-py"
 version = "2.3.1"
@@ -779,7 +773,6 @@ dependencies = [
     { name = "dependency", marker = "(platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'win32') or sys_platform == 'darwin'" },
     { name = "doy", marker = "(platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'win32') or sys_platform == 'darwin'" },
     { name = "einops", marker = "(platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'win32') or sys_platform == 'darwin'" },
-    { name = "elefant-rust", marker = "(platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'win32') or sys_platform == 'darwin'" },
     { name = "flask", marker = "(platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'win32') or sys_platform == 'darwin'" },
     { name = "flask-cors", marker = "(platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'win32') or sys_platform == 'darwin'" },
     { name = "funcy", marker = "(platform_machine == 'x86_64' and sys_platform == 'linux') or (platform_machine == 'x86_64' and sys_platform == 'win32') or sys_platform == 'darwin'" },
@@ -848,7 +841,6 @@ requires-dist = [
     { name = "dependency", specifier = ">=0.0.3" },
     { name = "doy", specifier = ">=1.9.2" },
     { name = "einops", specifier = "==0.8.0" },
-    { name = "elefant-rust", editable = "elefant_rust" },
     { name = "flask", specifier = ">=3.1.0" },
     { name = "flask-cors", specifier = ">=5.0.0" },
     { name = "funcy", specifier = ">=2.0" },
@@ -900,10 +892,6 @@ requires-dist = [
     { name = "wandb", specifier = ">=0.19.1" },
 ]
 provides-extras = ["model-export", "simulator"]
-
-[[package]]
-name = "elefant-rust"
-source = { editable = "elefant_rust" }
 
 [[package]]
 name = "executing"

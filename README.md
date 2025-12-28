@@ -21,24 +21,20 @@ uv run elefant/policy_model/train.py \
 ```
 
 ## Inference (TBD)
+1. First, download the model checkpoints, the checkpoints for 150M and 1.2B models are available now
+```bash
+uv run huggingface-cli download guaguaa/p2p-150M --local-dir ./checkpoints/150M/
+```
 
-Run inference with randomly initialized weights:
+Run inference with a trained checkpoints:
 
 ```bash
 uv run elefant/policy_model/inference.py \
-  --config config/policy_model/dev.yaml \
-  --use_random_weights
+  --config=checkpoints/150M/model_config.yaml  \
+  --checkpoint_path checkpoints/150M/checkpoint-step=00500000.ckpt
 ```
 
-Run inference with a trained checkpoint:
-
-```bash
-uv run elefant/policy_model/inference.py \
-  --config config/policy_model/dev.yaml \
-  --checkpoint_path model_checkpoint.ckpt
-```
-
-The inference server will run at `/tmp/usd`. This path is automatically picked up by **Recap** if you want to interact with the model in a real game environment.  
+The inference server will run at `/tmp/uds.recap`. This path is automatically picked up by **Recap** if you want to interact with the model in a real game environment.  
 
 > Note: Inference has only been tested on an RTX 5090 GPU using a Windows machine with WSL.
 
