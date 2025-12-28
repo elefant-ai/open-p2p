@@ -815,7 +815,7 @@ class PolicyModelTrainer(ModelFreePolicy):
         batch = self._apply_augmentations(batch)
         text_tokens_embed = batch.text_embeddings
 
-        # @self.compile_mode
+        @self.compile_mode
         def compiled_training_step(batch):
             with torch.no_grad():
                 actions_in, masked_labels, ratio_unlabeled = (
@@ -934,7 +934,7 @@ class PolicyModelTrainer(ModelFreePolicy):
     def validation_step(self, batch, batch_idx, dataloader_idx=0):
         text_tokens_embed = batch.text_embeddings
 
-        # @self.compile_mode
+        @self.compile_mode
         def _compiled_validation_step(batch, text_tokens_embed):
             actions_in, masked_labels, _ = self._create_target_and_masked_labels(batch)
             loss, _, losses, auxiliary_outputs = self._calculate_loss(
