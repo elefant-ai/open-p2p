@@ -3,19 +3,19 @@ Example on how to run (Only need to indicate the checkpoint directory on r2):
 
 If you want to run the validation on already trained model:
 
-uv run elefant/policy_model/validation.py --checkpoint_dir iraki/policy/dev/6/stage3_finetune
+uv run elefant/policy_model/validation.py --checkpoint_dir policy/dev/6/stage3_finetune
 
 
 If you want to run the validation alongside training:
 
 uv run elefant/policy_model/validation.py \
-  --checkpoint_dir iraki/policy/dev/6/stage3_finetune \
+  --checkpoint_dir policy/dev/6/stage3_finetune \
   --watch_for_checkpoints
 
 To restrict validation to a range of steps (inclusive):
 
 uv run elefant/policy_model/validation.py \
-  --checkpoint_dir iraki/policy/dev/6/stage3_finetune \
+  --checkpoint_dir policy/dev/6/stage3_finetune \
   --min_steps 40000 \
   --max_steps 100000
 """
