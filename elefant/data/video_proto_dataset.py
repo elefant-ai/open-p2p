@@ -13,6 +13,8 @@ The processes are:
 - There are multiple dataset workers that get data from the shuffle worker.
 
 The communication between the processes is done via zeromq queues (zmq_queue.py).
+
+Note that this class is mainly used for streaming data from a remote storage, rather than local disk. 
 """
 
 import logging
@@ -29,7 +31,6 @@ from elefant.data import zmq_queue
 import elefant_rust
 import uuid
 import torch.nn.functional as F
-from elefant.data.rescale import resize_image_for_model
 
 try:
     from torchcodec.decoders import VideoDecoder
@@ -125,6 +126,14 @@ class ProtoParser(ABC):
     ) -> Any:
         pass
 
+def resize_image_for_model(im: torch.Tensor, inp_dim) -> torch.Tensor:
+    assert len(im.shape) == 3
+    assert im.shape[0] == 3
+    if im.shape[1] == inp_dim[0] and im.shape[2] == inp_dim[1]:
+        return im
+    resized_im = _canonical_resize(im, inp_dim)
+    # resized_im = F.resize(im, inp_dim)
+    return resized_im
 
 def _get_zeromq_queue_addr(dataset_unique_id: str, queue_name: str) -> str:
     # To avoid race conditions we create the tempdir in every process (its harmless if it already exists).

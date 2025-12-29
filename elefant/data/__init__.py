@@ -23,8 +23,6 @@ __all__ = [
     "VideoProtoDatasetConfig",
     "UniversalAutoregressiveActionMappingConfig",
     "UniversalAutoregressiveActionMapping",
-    "R2TrainingDataFileSystem",
-    "R2FileSystem",
     "DummyDataset",
     "DummyDatasetConfig",
 ]

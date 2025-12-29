@@ -262,7 +262,7 @@ class ActionLabelVideoProtoDataset(VideoProtoDataset):
 
 if __name__ == "__main__":
     ds_cfg = ActionLabelVideoProtoDatasetConfig(
-        local_prefix="/path/to/your/data/folder",
+        local_prefix="toy-examples",
         frame_height=192,
         frame_width=192,
         T=200,

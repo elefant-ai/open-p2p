@@ -9,7 +9,7 @@ import fsspec
 
 
 class ConfigBase(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
 
 
 def _substitute_env_vars(content: str) -> str:

@@ -11,12 +11,9 @@ shared:
     type: "conv"
     conv_tokenizer_config:
       num_tokens: 1
-    vit_tokenizer_config:
-      patch_size: 16
 
 inference:
   mouse_sampling_approach: "truncated_normal"
-  checkpoint_path: iraki/policy_model/dev/1/stage3_finetune/checkpoint-step=00000500.ckpt
 
 # Policy Model Configuration (Stage 2 student & 3 model)
 policy_model:
@@ -29,9 +26,6 @@ policy_model:
   attention_history_len: [200, 200, 200, 200, 200, 200, 200, 200, 200, 200] # the length of the attention history needs to be the same as n_transformer_layers
   n_kv_sink_tokens: 0
   model_type: "dense"
-  sparse_moe:
-    num_experts: 16
-    experts_per_token: 4
   action_decoder:
     embed_dim: *transformer_dim
 
@@ -51,10 +45,7 @@ stage3_finetune:
 
   training_dataset:
     batch_size: &stage3_batch_size 1
-    local_prefix: data_folder/employee_labelled
-    always_labelled: true
-    n_preprocess_threads_per_gpu: 32
-    preprocessed_chunks_queue_size_per_gpu: 2
+    local_prefix: toy-examples
     warn_on_starvation: false
     rand_augmentation:
       fraction_augmented: 1.0
@@ -66,21 +57,25 @@ stage3_finetune:
         - translation
         - random_blur
         - sharpness
+    # below are the parameters for toy examples
+    # probably needs to be adjusted for larger datasets
+    n_preprocess_threads_per_gpu: 1
+    preprocessed_chunks_queue_size_per_gpu: 1
     shuffle_buffer_size_per_gpu: 1900
     dataset_worker_num_workers_per_gpu: 1
-    dataset_worker_prefetch_factor: 16
-    shuffled_chunks_queue_size_per_gpu: 16
+    dataset_worker_prefetch_factor: 1
+    shuffled_chunks_queue_size_per_gpu: 1
 
   validation_datasets:
     - batch_size: *stage3_batch_size
-      local_prefix: data_folder_validation/employee_labelled
+      local_prefix: toy-examples
       validation_name: "overall"
-      always_labelled: true
-      n_preprocess_threads_per_gpu: &validation_stage3_n_preprocess_threads_per_gpu 8
+      n_preprocess_threads_per_gpu: &validation_stage3_n_preprocess_threads_per_gpu 1
       preprocessed_chunks_queue_size_per_gpu: &validation_stage3_preprocessed_chunks_queue_size_per_gpu 1
       shuffled_chunks_queue_size_per_gpu: &validation_stage3_shuffled_chunks_queue_size 1
-      dataset_worker_prefetch_factor: &validation_stage3_dataset_worker_prefetch_factor 8
+      dataset_worker_prefetch_factor: &validation_stage3_dataset_worker_prefetch_factor 1
       warn_on_starvation: false
+      
 
 
 wandb:
