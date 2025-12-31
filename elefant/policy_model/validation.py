@@ -280,7 +280,6 @@ def report_validation_metrics(checkpoint_path, global_step, run_id: str):
         logging.info("Cleaned tmp dataset dirs")
 
 
-
 def is_step_in_range(
     step: int, min_steps: Optional[int], max_steps: Optional[int]
 ) -> bool:

@@ -1,5 +1,5 @@
 shared:
-  output_path: ${USER}/policy_model/dev/1
+  output_path: ${USER}/policy_model/1200M
   n_seq_timesteps: 200
   frame_height: 192
   frame_width: 192
@@ -17,13 +17,13 @@ inference:
 
 # Policy Model Configuration (Stage 2 student & 3 model)
 policy_model:
-  n_transformer_layers: 10
+  n_transformer_layers: 22
   n_q_head: 16
   n_kv_head: 16
   n_thinking_tokens: 1
-  transformer_dim: &transformer_dim 1024
+  transformer_dim: &transformer_dim 2048
   mask_block_size: 128
-  attention_history_len: [200, 200, 200, 200, 200, 200, 200, 200, 200, 200] # the length of the attention history needs to be the same as n_transformer_layers
+  attention_history_len: [200, 200, 200, 200, 200, 200, 200, 200,200, 200, 200, 200,200, 200, 200, 200,200, 200, 200, 200,200, 200]
   n_kv_sink_tokens: 0
   model_type: "dense"
   action_decoder:
@@ -32,7 +32,7 @@ policy_model:
 
 stage3_finetune:
   optim:
-    learning_rate: 0.0001
+    learning_rate: 0.00003
     weight_decay: 0.0001
     beta_1: 0.9
     beta_2: 0.999
@@ -45,7 +45,7 @@ stage3_finetune:
 
   training_dataset:
     batch_size: &stage3_batch_size 1
-    local_prefix: toy-examples
+    local_prefix: dataset
     warn_on_starvation: false
     rand_augmentation:
       fraction_augmented: 1.0
@@ -68,7 +68,7 @@ stage3_finetune:
 
   validation_datasets:
     - batch_size: *stage3_batch_size
-      local_prefix: toy-examples
+      local_prefix: dataset
       validation_name: "overall"
       n_preprocess_threads_per_gpu: &validation_stage3_n_preprocess_threads_per_gpu 1
       preprocessed_chunks_queue_size_per_gpu: &validation_stage3_preprocessed_chunks_queue_size_per_gpu 1
