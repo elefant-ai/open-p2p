@@ -48,7 +48,8 @@ Recap runs on **Windows**, while the inference server runs on **Linux or WSL**.
 
 ⚠️ **Latency requirement**  
 End-to-end inference latency should be **< 50 ms** to avoid performance degradation.
-
+(The latency will be displayed when in Recap)
+![Latency Analysis](assets/latency.png)
 ---
 
 ### (Optional) WSL Setup
@@ -188,7 +189,7 @@ The inference server listens on:
 ```
 This path is automatically detected by **Recap**.
 
-### Start Recap (Windows)
+### Start Recap (Windows Command Prompt)
 Recap connects the inference server to keyboard and mouse control:
 - Captures screenshots from a selected window
 - Sends frames to the inference server
@@ -198,12 +199,13 @@ Recap connects the inference server to keyboard and mouse control:
 #### How to Control Recap
 1. Select the game window to interact with
 2. Ensure the inference server is running at /tmp/uds.recap
-3. Press Shift + ]: You should hear a beep: “start capturing with inference”
-4. (Move the mouse or press any key to interrupt inference)
-5. Press Shift + ] again to properly stop the session
+3. Press `Shift` + `]`: You should hear a beep: “start capturing with inference”
+4. (Move the mouse or press any key to interrupt inference, then press `[` to resume model controlling)
+5. Press `Shift` + `]`again to properly stop the session
 After stopping, a folder will open containing:
 - An .mp4 gameplay recording
 - An annotation.proto file with recorded keyboard and mouse actions
+[UI](assets/UI.png)
 
 ## Paper & Citation
 Coming soon. 
