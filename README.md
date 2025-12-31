@@ -197,7 +197,7 @@ Recap connects the inference server to keyboard and mouse control:
 - Executes keyboard and mouse inputs in real time
 
 #### How to Control Recap
-1. [Select Game Window](assets/select_screen.png) to interact with 
+1. Select Game [Window](assets/select_screen.png) to interact with 
 2. Ensure the inference server is running at /tmp/uds.recap
 3. Press `Shift` + `]`: You should hear a beep: “start capturing with inference”
 4. (Move the mouse or press any key to interrupt inference, then press `[` to resume model controlling)
