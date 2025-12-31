@@ -503,6 +503,7 @@ class InferenceServer(UnixDomainSocketInferenceServer):
     ):
         super().__init__(uds_path=UDS_PATH)
         self.shared_text_state = SharedTextInputState(input_text=input_text)
+        self.input_text = input_text
         self.terminal_listener_task = None
         if not compile:
             logging.warning("!!!No compile is enabled!!!")
@@ -625,7 +626,10 @@ class InferenceServer(UnixDomainSocketInferenceServer):
                     dtype=torch.uint8,
                     device="cpu",
                 ).to(self.device, non_blocking=True)
-                action = self.inference_state.get_action(next_frame)
+                if self.input_text:
+                    action = self.inference_state.get_action(next_frame, "dummy text")
+                else:
+                    action = self.inference_state.get_action(next_frame)
                 print(f"Action: {action}")
                 time_taken_ns = time.time_ns() - start_time_i
                 self.timing_metrics.record("get_action_time", time_taken_ns / 1e9)
