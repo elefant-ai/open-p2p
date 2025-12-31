@@ -14,7 +14,7 @@ print(f"Downloading {target_size} from {repo_id}...")
 snapshot_download(
     repo_id=repo_id,
     allow_patterns=f"{target_size}/*",
-    local_dir=f"./checkpoints/{target_size}",
+    local_dir="./checkpoints",
 )
 
 print("Done.")

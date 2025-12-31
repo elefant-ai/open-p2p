@@ -37,7 +37,7 @@ Recap runs on **Windows**, while the inference server runs on **Linux or WSL**.
 - **Game environments are not provided**
 - Tested games:
   - Steam: **DOOM**, **Quake**, **Need for Speed**
-  - Several **Roblox** games
+  - Several **Roblox**: **Rivals**, **Natural Survival Disaster**, **Hypershot**, **Be a Shark**, **Blade Ball**, and etc. 
 - **System setup**:
   - Inference server: Linux or WSL
   - Game + Recap: Windows
@@ -46,16 +46,60 @@ Recap runs on **Windows**, while the inference server runs on **Linux or WSL**.
   - RTX 5090 (model inference)
   - RTX 5080 (game rendering)
 
-⚠️ **Latency requirement**  
-End-to-end inference latency should be **< 50 ms** to avoid performance degradation.
+### Latency requirement
+Any hardware that achieves an end-to-end inference latency of < 50 ms should be sufficient.
+A detailed latency breakdown is provided in **Recap** [Latency Analysis](assets/latency.png). 
 
 ---
 
 ### (Optional) WSL Setup
 
 WSL is **only required** if you want to interact with real games.  
-You must be on a **Windows machine** to use Recap.
+You must be on a **Windows machine** to use Recap. 
 
+#### 1. Install WSL with Ubuntu 24.04
+```bash
+wsl --install -d Ubuntu-24.04
+```
+Reboot if prompted.
+
+#### 2. Increase WSL Memory Limit (Recommended)
+Create or edit the file:
+```bash
+C:\Users\<username>\.wslconfig
+```
+Add
+```bash
+[wsl2]
+memory=52GB
+```
+Set this to a large fraction of your system RAM.
+Restart WSL (or reboot) for changes to take effect.
+
+#### 3. Install Core Dependencies (Inside WSL)
+```
+sudo apt update
+sudo apt install -y build-essential git htop nvtop socat
+```
+
+#### 4. Install `uv`
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+#### 5. Install FFmpeg
+```bash
+sudo add-apt-repository ppa:ubuntuhandbook1/ffmpeg7
+sudo apt update
+sudo apt install -y ffmpeg
+```
+
+#### 6. Install CUDA (WSL)
+
+#### 7. Install Rust (for required tooling)
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
 ---
 
 ### Setup
@@ -115,18 +159,37 @@ Inference can run on Linux **without a display, but real-time game interaction r
 ### Start the Inference Server
 (On Linux or WSL)
 Ensure `model_config.yaml` and `checkpoint.ckpt` are downloaded from Hugging Face.
+
+#### Without Text Input (Default)
+
+This runs the model **without textual instructions**.
+
+Due to compilation constraints, text input cannot be enabled or disabled at runtime and the mode must be chosen at launch. A model started without text input cannot accept text later.
+
+The majority of the experiments in our paper use the no-text-input setting.
 ```bash
 uv run elefant/policy_model/inference.py \
   --config checkpoints/150M/model_config.yaml \
   --checkpoint_path checkpoints/150M/checkpoint-step=00500000.ckpt
 ```
+
+#### With Text Input
+
+This runs the model with text instructions enabled.
+```bash
+uv run elefant/policy_model/inference.py \
+  --config checkpoints/150M/model_config.yaml \
+  --checkpoint_path checkpoints/150M/checkpoint-step=00500000.ckpt
+  --input_text
+```
+
 The inference server listens on:
 ```bash
 /tmp/uds.recap
 ```
 This path is automatically detected by **Recap**.
 
-### Start Recap (Windows)
+### Start Recap (Windows Command Prompt)
 Recap connects the inference server to keyboard and mouse control:
 - Captures screenshots from a selected window
 - Sends frames to the inference server
@@ -134,14 +197,15 @@ Recap connects the inference server to keyboard and mouse control:
 - Executes keyboard and mouse inputs in real time
 
 #### How to Control Recap
-1. Select the game window to interact with
+1. Select Game [Window](assets/select_screen.png) to interact with 
 2. Ensure the inference server is running at /tmp/uds.recap
-3. Press Shift + ]: You should hear a beep: “start capturing with inference”
-4. (Move the mouse or press any key to interrupt inference)
-5. Press Shift + ] again to properly stop the session
-After stopping, a folder will open containing:
+3. Press `Shift` + `]`: You should hear a beep: “start capturing with inference”
+4. (Move the mouse or press any key to interrupt inference, then press `[` to resume model controlling)
+5. Press `Shift` + `]`again to properly stop the session
+After stopping, a [folder](assets/UI.png) will open containing:
 - An .mp4 gameplay recording
 - An annotation.proto file with recorded keyboard and mouse actions
+
 
 ## Paper & Citation
 Coming soon. 
