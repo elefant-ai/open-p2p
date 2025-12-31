@@ -46,10 +46,10 @@ Recap runs on **Windows**, while the inference server runs on **Linux or WSL**.
   - RTX 5090 (model inference)
   - RTX 5080 (game rendering)
 
-⚠️ **Latency requirement**  
-End-to-end inference latency should be **< 50 ms** to avoid performance degradation.
-(The latency will be displayed when in Recap, make sure the majority of them is below the 50ms threshold to guarantee best performance)
-[Latency Analysis](assets/latency.png)
+### Latency requirement
+Any hardware that achieves an end-to-end inference latency of < 50 ms should be sufficient.
+A detailed latency breakdown is provided in **Recap** [Latency Analysis](assets/latency.png). 
+
 ---
 
 ### (Optional) WSL Setup
