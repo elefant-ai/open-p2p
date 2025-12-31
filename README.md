@@ -37,7 +37,7 @@ Recap runs on **Windows**, while the inference server runs on **Linux or WSL**.
 - **Game environments are not provided**
 - Tested games:
   - Steam: **DOOM**, **Quake**, **Need for Speed**
-  - Several **Roblox**: **Rivals**, **Natural Survival Disaster**, **Hypershot**, **Be a Shark**, etc. 
+  - Several **Roblox**: **Rivals**, **Natural Survival Disaster**, **Hypershot**, **Be a Shark**, **Blade Ball**, and etc. 
 - **System setup**:
   - Inference server: Linux or WSL
   - Game + Recap: Windows
@@ -197,15 +197,15 @@ Recap connects the inference server to keyboard and mouse control:
 - Executes keyboard and mouse inputs in real time
 
 #### How to Control Recap
-1. Select the game window to interact with
+1. [Select Game Window](assets/select_screen.png) to interact with 
 2. Ensure the inference server is running at /tmp/uds.recap
 3. Press `Shift` + `]`: You should hear a beep: “start capturing with inference”
 4. (Move the mouse or press any key to interrupt inference, then press `[` to resume model controlling)
 5. Press `Shift` + `]`again to properly stop the session
-After stopping, a folder will open containing:
+After stopping, a [folder](assets/UI.png) will open containing:
 - An .mp4 gameplay recording
 - An annotation.proto file with recorded keyboard and mouse actions
-[UI](assets/UI.png)
+
 
 ## Paper & Citation
 Coming soon. 
