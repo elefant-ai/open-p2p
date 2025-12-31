@@ -1131,7 +1131,7 @@ def _main():
             model_records_path=args.model_records_path,
             input_records_path=args.input_records_path,
             metrics_window_seconds=args.metrics_window_seconds,
-            checkpoint_path=args.checkpoint_path
+            checkpoint_path=args.checkpoint_path,
         )
 
 

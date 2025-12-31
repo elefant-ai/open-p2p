@@ -14,7 +14,7 @@ The processes are:
 
 The communication between the processes is done via zeromq queues (zmq_queue.py).
 
-Note that this class is mainly used for streaming data from a remote storage, rather than local disk. 
+Note that this class is mainly used for streaming data from a remote storage, rather than local disk.
 """
 
 import logging
@@ -126,6 +126,7 @@ class ProtoParser(ABC):
     ) -> Any:
         pass
 
+
 def resize_image_for_model(im: torch.Tensor, inp_dim) -> torch.Tensor:
     assert len(im.shape) == 3
     assert im.shape[0] == 3
@@ -134,6 +135,7 @@ def resize_image_for_model(im: torch.Tensor, inp_dim) -> torch.Tensor:
     resized_im = _canonical_resize(im, inp_dim)
     # resized_im = F.resize(im, inp_dim)
     return resized_im
+
 
 def _get_zeromq_queue_addr(dataset_unique_id: str, queue_name: str) -> str:
     # To avoid race conditions we create the tempdir in every process (its harmless if it already exists).
