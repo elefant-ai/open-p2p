@@ -45,8 +45,11 @@ from elefant.torch.util import log_time
 class SharedTextInputState:
     """A thread-safe class to hold the latest text input from the terminal."""
 
-    def __init__(self):
-        self._text = None
+    def __init__(self, input_text: bool = False):
+        if input_text:
+            self._text = ""
+        else:
+            self._text = None
         self._lock = threading.Lock()
 
     def get(self) -> Optional[str]:
@@ -496,9 +499,10 @@ class InferenceServer(UnixDomainSocketInferenceServer):
         input_records_path: str = None,
         metrics_window_seconds: float = 60.0,
         checkpoint_path: str = None,
+        input_text: bool = False,
     ):
         super().__init__(uds_path=UDS_PATH)
-        self.shared_text_state = SharedTextInputState()
+        self.shared_text_state = SharedTextInputState(input_text=input_text)
         self.terminal_listener_task = None
         if not compile:
             logging.warning("!!!No compile is enabled!!!")
@@ -1024,6 +1028,7 @@ def serve_model(
     input_records_path: str = None,
     metrics_window_seconds: float = 60.0,
     checkpoint_path: str = None,
+    input_text: bool = False,
 ):
     logging.basicConfig(level=logging.INFO, force=True)
 
@@ -1038,6 +1043,7 @@ def serve_model(
         input_records_path=input_records_path,
         metrics_window_seconds=metrics_window_seconds,
         checkpoint_path=checkpoint_path,
+        input_text=input_text,
     )
 
     # Setup signal handlers for non-asyncio contexts
@@ -1102,6 +1108,12 @@ def _main():
         default=60.0,
         help="Time window in seconds for aggregating and reporting metrics.",
     )
+    parser.add_argument(
+        "--input_text",
+        action="store_true",
+        default=False,
+        help="Input text from stdin.",
+    )
     args = parser.parse_args()
 
     if args.use_full_inference and args.use_manual_sampling:
@@ -1132,6 +1144,7 @@ def _main():
             input_records_path=args.input_records_path,
             metrics_window_seconds=args.metrics_window_seconds,
             checkpoint_path=args.checkpoint_path,
+            input_text=args.input_text,
         )
 
 

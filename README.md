@@ -37,7 +37,7 @@ Recap runs on **Windows**, while the inference server runs on **Linux or WSL**.
 - **Game environments are not provided**
 - Tested games:
   - Steam: **DOOM**, **Quake**, **Need for Speed**
-  - Several **Roblox** games
+  - Several **Roblox**: **Rivals**, **Natural Survival Disaster**, **Hypershot**, **Be a Shark**, etc. 
 - **System setup**:
   - Inference server: Linux or WSL
   - Game + Recap: Windows
@@ -54,8 +54,51 @@ End-to-end inference latency should be **< 50 ms** to avoid performance degradat
 ### (Optional) WSL Setup
 
 WSL is **only required** if you want to interact with real games.  
-You must be on a **Windows machine** to use Recap.
+You must be on a **Windows machine** to use Recap. 
 
+#### 1. Install WSL with Ubuntu 24.04
+```bash
+wsl --install -d Ubuntu-24.04
+```
+Reboot if prompted.
+
+#### 2. Increase WSL Memory Limit (Recommended)
+Create or edit the file:
+```bash
+C:\Users\<username>\.wslconfig
+```
+Add
+```bash
+[wsl2]
+memory=52GB
+```
+Set this to a large fraction of your system RAM.
+Restart WSL (or reboot) for changes to take effect.
+
+#### 3. Install Core Dependencies (Inside WSL)
+```
+sudo apt update
+sudo apt install -y build-essential git htop nvtop socat
+```
+
+#### 4. Install `uv`
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+#### 5. Install FFmpeg
+```bash
+sudo add-apt-repository ppa:ubuntuhandbook1/ffmpeg7
+sudo apt update
+sudo apt install -y ffmpeg
+```
+
+#### 6. Install CUDA (WSL)
+
+#### 7. Install Rust (for required tooling)
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
 ---
 
 ### Setup
@@ -115,11 +158,30 @@ Inference can run on Linux **without a display, but real-time game interaction r
 ### Start the Inference Server
 (On Linux or WSL)
 Ensure `model_config.yaml` and `checkpoint.ckpt` are downloaded from Hugging Face.
+
+#### Without Text Input (Default)
+
+This runs the model **without textual instructions**.
+
+Due to compilation constraints, text input cannot be enabled or disabled at runtime and the mode must be chosen at launch. A model started without text input cannot accept text later.
+
+The majority of the experiments in our paper use the no-text-input setting.
 ```bash
 uv run elefant/policy_model/inference.py \
   --config checkpoints/150M/model_config.yaml \
   --checkpoint_path checkpoints/150M/checkpoint-step=00500000.ckpt
 ```
+
+#### With Text Input
+
+This runs the model with text instructions enabled.
+```bash
+uv run elefant/policy_model/inference.py \
+  --config checkpoints/150M/model_config.yaml \
+  --checkpoint_path checkpoints/150M/checkpoint-step=00500000.ckpt
+  --input_text
+```
+
 The inference server listens on:
 ```bash
 /tmp/uds.recap
