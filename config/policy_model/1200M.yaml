@@ -79,7 +79,7 @@ stage3_finetune:
 
 
 wandb:
-  enabled: true
+  enabled: false
   project: "policy_model"
   # Generally want adhoc experiments to show as ready for deletion.
   exp_name: "delete-me-dev"
