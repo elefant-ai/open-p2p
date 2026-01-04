@@ -4,7 +4,7 @@
 
 P2P is trained on **8,000+ hours of human-annotated gameplay videos**. We are actively working on releasing the full dataset. In the meantime, a **toy sample dataset** is available on [Hugging Face](https://huggingface.co/datasets/guaguaa/p2p-toy-examples):
 
-Our smallest model (**150M parameters**) can be trained on **8× H100 GPUs in ~70 hours**.
+Our smallest model (**150M parameters**) can be trained on **8× H100 GPUs in ~70 hours**. The largest model (**1.2B parameters**) is trained on **8× H100 GPUs for ~140 hours**
 
 This repository contains:
 
@@ -56,6 +56,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 # Socat (for inference server communication)
 sudo apt install socat
+
+# increase the maximum number of open file descriptors
+ulimit -n 65535
 ```
 
 ### Download Model Checkpoints
@@ -132,23 +135,17 @@ uv run elefant/policy_model/inference.py \
 
 | Platform | Games | Settings |
 |----------|-------|----------|
+| Roblox | **Rivals**, **Hypershot**, **Be a Shark**, etc. | Camera sensitivity: 0.52 |
 | Steam | **DOOM** | Smoothing: 2×, Look sensitivity: 22%, Move sensitivity: 22% |
 | Steam | **Quake** | Mouse sensitivity: 3.5, Smoothing: disabled |
-| Steam | **Need for Speed** | — |
-| Roblox | **Rivals**, **Natural Survival Disaster**, **Hypershot**, **Be a Shark**, **Blade Ball**, etc. | Camera sensitivity: 0.52 |
 
 ### Tested Hardware
 
-- Windows 11
-- RTX 5090 (model inference)
-- RTX 5080 (game rendering)
+- Windows 11 with 2 GPUs
+  - RTX 5090 (model inference)
+  - RTX 5080 (game rendering)
 
-### Latency Requirements
-
-Any hardware achieving end-to-end inference latency of **< 50 ms** should be sufficient.
-
-A detailed latency breakdown is provided by Recap after each inference session:
-
+Technically any hardware that can achieve end-to-end inference latency of **< 50 ms** should be sufficient. A detailed latency breakdown is provided by Recap after each inference session:
 ![Latency Analysis](assets/latency.png)
 
 ### Prerequisites
@@ -180,7 +177,7 @@ Set this to a large fraction of your system RAM. Restart WSL (or reboot) for cha
 
 #### 5. Install Core Dependencies (Inside WSL)
 
-Follow the [Prerequisites](#prerequisites) section above.
+Clone the repo and follow the [Prerequisites](#prerequisites) section above.
 
 ### Getting Started
 
