@@ -177,7 +177,7 @@ Set this to a large fraction of your system RAM. Restart WSL (or reboot) for cha
 
 #### 5. Install Core Dependencies (Inside WSL)
 
-Follow the [Prerequisites](#prerequisites) section above.
+Clone the repo and follow the [Prerequisites](#prerequisites) section above.
 
 ### Getting Started
 
