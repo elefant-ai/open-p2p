@@ -10,7 +10,7 @@ Our smallest model (**150M parameters**) can be trained on **8× H100 GPUs in ~7
 This repository contains:
 - The full **training pipeline** for P2P models  
 - **Inference code** for running trained models  
-- Integration with **Recap** for real-time interaction with commercial games  
+- Integration with [**Recap**](https://github.com/elefant-ai/recap) for real-time interaction with commercial games on Windows machine. 
 
 ---
 
@@ -22,40 +22,116 @@ This repo provides everything needed to:
 - Serve models for real-time inference
 - Connect models to real games via the **Recap** system
 
-To interact with real game environments, you must also install the **Recap** repository:
-
-🔗 https://github.com/elefant-ai/recap
-
-Recap runs on **Windows**, while the inference server runs on **Linux or WSL**.
-
 ---
 
 ## Installation
+First clone the repo
+```bash
+git clone https://github.com/open-p2p
+cd open-p2p
+```
 
-### Prerequisites
+### For Training and offline inference (Linux)
 
-- **Game environments are not provided**
-- Tested games:
+#### Prerequisite \label{requirement}
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+sudo apt update 
+sudo apt install build-essential git nvtop htop
+sudo add-apt-repository ppa:ubuntuhandbook1/ffmpeg7
+sudo apt install ffmpeg
+sudo apt install -y libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavdevice-dev libavfilter-dev
+sudo apt install -y clang libclang-dev
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+sudo apt install socat
+```
+
+#### Getting Started
+
+##### Download Model Checkpoints
+```bash
+uv run python scripts/download_checkpoints.py <150M|300M|600M|1200M>
+```
+
+##### Download Sample Dataset
+```bash
+uv run python scripts/download_data.py
+```
+(We are working on releasing the full dataset)
+
+
+
+Training: 
+
+All the dependencies will be handled by `uv`. 
+
+The fully training jobs were completed with 8× H100 GPUs, however the config should work with one H100 or A100 GPU too. 
+To reproduce the models from paper, use one of the provided configs (you need to adjust the dataloader related parameters according to your environment for an memory optimized run)
+- config/policy_model/150M.yaml
+- config/policy_model/300M.yaml
+- config/policy_model/600M.yaml
+- config/policy_model/1200M.yaml
+```bash
+uv run elefant/policy_model/train.py --config config/policy_model/150M.yaml
+```
+
+Validation:
+Training and validation are deliberately separated for stability.
+
+You *can* merge them by lowering `validation_step_interval` in the config, but this may cause instability or crashes.
+
+To run validation on all checkpoints in a directory:
+```bash
+uv run elefant/policy_model/validation.py --checkpoint_dir <PATH_TO_CHECKPOINT_DIR>
+```
+Validation results (perplexity) are reported to *Weights & Biases*.
+
+Inference
+
+>**Note**: Inference can run on Linux **without a display, but real-time game interaction requires a Windows machine + Recap**.
+1. you probably need to login to your huggingface account as gemme tokenizer needs authentification to dowload
+```bash
+uv run huggingface-cli login
+```
+To validate the inference, if you already download the checkpoint and model config you can run 
+```bash
+uv run elefant/policy_model/inference.py \
+  --config checkpoints/150M/model_config.yaml \
+  --checkpoint_path checkpoints/150M/checkpoint-step=00500000.ckpt
+```
+or if you just want to check the code works, run
+```bash
+uv run elefant/policy_model/inference.py --config=config/policy_model/150M.yaml --use_random_weights
+```
+
+
+
+### For running inference to interact with game in real-time (Windows)
+
+Note that **Game environments are not provided**
+- Games used to test model real-time playing:
   - Steam: **DOOM**, **Quake**, **Need for Speed**
+    - Quake: **Mouse sensitivity**: 3.5, **smoothing**: disabled
+    - DOOM: **smoothing**: 2x, **look sensitivity**: 22%, **move sensitivity**: 22%
   - Several **Roblox**: **Rivals**, **Natural Survival Disaster**, **Hypershot**, **Be a Shark**, **Blade Ball**, and etc. 
-- **System setup**:
-  - Inference server: Linux or WSL
-  - Game + Recap: Windows
+    - **Camera sensitivity**: 0.52.
 - **Tested hardware**:
   - Windows 11
   - RTX 5090 (model inference)
   - RTX 5080 (game rendering)
 
-### Latency requirement
+#### Latency requirement
 Any hardware that achieves an end-to-end inference latency of < 50 ms should be sufficient.
-A detailed latency breakdown is provided in **Recap** [Latency Analysis](assets/latency.png). 
+A detailed latency breakdown is provided by **Recap** [Latency Analysis](assets/latency.png), this chart will be generated once you finish a model inference session. 
 
 ---
 
-### (Optional) WSL Setup
+#### Prerequisite 
+0.0 Install Nvidia GPU driver
 
-WSL is **only required** if you want to interact with real games.  
-You must be on a **Windows machine** to use Recap. 
+0. Please first follow the instruction to install [**Recap**](https://github.com/elefant-ai/recap)
+
+1. Install WSL on Window machine:
 
 #### 1. Install WSL with Ubuntu 24.04
 ```bash
@@ -77,90 +153,15 @@ Set this to a large fraction of your system RAM.
 Restart WSL (or reboot) for changes to take effect.
 
 #### 3. Install Core Dependencies (Inside WSL)
-```
-sudo apt update
-sudo apt install -y build-essential git htop nvtop socat
-```
+Follow the instruction on \ref{requirement}
 
-#### 4. Install `uv`
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
 
-#### 5. Install FFmpeg
-```bash
-sudo add-apt-repository ppa:ubuntuhandbook1/ffmpeg7
-sudo apt update
-sudo apt install -y ffmpeg
-```
+### Getting started
 
-#### 6. Install CUDA (WSL)
-
-#### 7. Install Rust (for required tooling)
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
----
-
-### Setup
-
-#### Install `uv`
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-### Clone the repository
-```bash
-git clone https://github.com/open-p2p
-cd open-p2p
-```
-All dependencies are managed by uv.
-
-## Geting Started
-
-### Download Model Checkpoints
-```bash
-uv run python scripts/download_checkpoints.py <150M|300M|600M|1200M>
-```
-
-### Download Sample Dataset
-```bash
-uv run python scripts/download_data.py
-```
-(We are working on releasing the full dataset)
-
-## Training
-We tested training on 8× H100 GPUs. To reproduce the models from paper, use one of the provided configs
-- config/policy_model/150M.yaml
-- config/policy_model/300M.yaml
-- config/policy_model/600M.yaml
-- config/policy_model/1200M.yaml
-Simply start training by
-```bash
-uv run elefant/policy_model/train.py --config config/policy_model/150M.yaml
-```
-
-### Validation
-Training and validation are deliberately separated for stability.
-
-You *can* merge them by lowering `validation_step_interval` in the config, but this may cause instability or crashes.
-
-To run validation on all checkpoints in a directory:
-```bash
-uv run elefant/policy_model/validation.py --checkpoint_dir <PATH_TO_CHECKPOINT_DIR>
-```
-Validation results (perplexity) are reported to *Weights & Biases*.
-
-## Inference
-
-Inference can run on Linux **without a display, but real-time game interaction requires Windows + Recap**.
-
-### Start the Inference Server
-(On Linux or WSL)
+1. Start the Inference Server (On WSL environment)
 Ensure `model_config.yaml` and `checkpoint.ckpt` are downloaded from Hugging Face.
 
-#### Without Text Input (Default)
+Without Text Input (Default)
 
 This runs the model **without textual instructions**.
 
@@ -173,7 +174,7 @@ uv run elefant/policy_model/inference.py \
   --checkpoint_path checkpoints/150M/checkpoint-step=00500000.ckpt
 ```
 
-#### With Text Input
+With Text Input
 
 This runs the model with text instructions enabled.
 ```bash
@@ -189,22 +190,22 @@ The inference server listens on:
 ```
 This path is automatically detected by **Recap**.
 
-### Start Recap (Windows Command Prompt)
-Recap connects the inference server to keyboard and mouse control:
+2. Start Recap (Use Windows Command Prompt)
+CD to recap repo and run `just trace` on the command prompt, you should see [UI](assets/UI.png). Fill in `you name` and `env` boxes which will be filled in as metadata in the annotation proto that's to be generated. 
+
+2.1 Choose the right window to capture (such as Roblox on [UI](assets/UI.png))
+2.3. Press `Shift` + `]`: You should hear a beep: “start capturing with inference”
+2.4. (Move the mouse or press any key to interrupt inference, then press `[` to resume model controlling)
+2.5. Press `Shift` + `]`again to properly stop the session
+After stopping, a [folder](assets/folder.png) will open containing:
+- An .mp4 gameplay recording
+- An annotation.proto file with recorded keyboard and mouse actions
+
+> Note: Recap connects the inference server to keyboard and mouse control:
 - Captures screenshots from a selected window
 - Sends frames to the inference server
 - Receives predicted actions
 - Executes keyboard and mouse inputs in real time
-
-#### How to Control Recap
-1. Select Game [Window](assets/select_screen.png) to interact with 
-2. Ensure the inference server is running at /tmp/uds.recap
-3. Press `Shift` + `]`: You should hear a beep: “start capturing with inference”
-4. (Move the mouse or press any key to interrupt inference, then press `[` to resume model controlling)
-5. Press `Shift` + `]`again to properly stop the session
-After stopping, a [folder](assets/UI.png) will open containing:
-- An .mp4 gameplay recording
-- An annotation.proto file with recorded keyboard and mouse actions
 
 
 ## Paper & Citation
