@@ -214,7 +214,7 @@ The inference server listens on `/tmp/uds.recap`, which is automatically detecte
 ```bash
    just trace
 ```
-2. Fill in the `your name` and `env` fields (used as metadata in the annotation proto)
+2. Fill in the metadata fields, feel free to remove the box (click on `-` icon) if you don't need them
 3. Select the window to capture (e.g., Roblox)
 
 ![UI Screenshot](assets/UI.png)
