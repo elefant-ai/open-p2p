@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Open P2P | A Foundation Model for Gaming Agents</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            padding-top: 56px;
+        }
+
+        /* Navigation Bar */
+        .navbar-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid #00d1b2;
+        }
+
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            height: 56px;
+            gap: 0.5rem;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: #1a1a2e;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-right: 2rem;
+            flex-shrink: 0;
+        }
+
+        .navbar-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .navbar-links::-webkit-scrollbar {
+            display: none;
+        }
+
+        .navbar-link {
+            padding: 0.5rem 0.85rem !important;
+            color: #4a4a4a;
+            text-decoration: none;
+            font-size: 1.1rem;      /* bigger */
+            font-weight: 700;        /* bolder */
+            border-radius: 6px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-link:hover {
+            background: #f0f0f0;
+            color: #1a1a2e;
+        }
+
+        .navbar-link.active {
+            background: #1a1a2e;
+            color: white;
+        }
+        .navbar-link::after {
+            display: none !important;
+        }
+
+        .hero {
+            padding-top: 4rem;
+            padding-bottom: 2rem;
+        }
+
+        .project-logo {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        .publication-title {
+            font-weight: 700;
+            font-size: 2.0rem;
+        }
+
+        .publication-authors {
+            margin-top: 1.5rem;
+        }
+
+        .publication-authors a {
+            color: #4a4a4a;
+        }
+
+        .publication-authors a:hover {
+            text-decoration: underline;
+        }
+
+        .author-block {
+            line-height: 2;
+        }
+
+        .publication-links {
+            margin-top: 1.5rem;
+        }
+
+        .publication-links .button {
+            margin: 0.25rem;
+        }
+
+        .external-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section {
+            padding: 3rem 1.5rem;
+            scroll-margin-top: 70px;
+        }
+
+        .title.is-3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .content p {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .content p b {
+            font-weight: 600;
+        }
+
+        .video-banner {
+            scroll-margin-top: 70px;
+        }
+
+        .video-banner video {
+            width: 100%;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .highlight-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 3rem 1.5rem;
+            scroll-margin-top: 56px;
+        }
+
+        .highlight-section .title {
+            color: white;
+        }
+
+        .highlight-section .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .highlight-video-container {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .highlight-video-container video {
+            width: 100%;
+            display: block;
+        }
+
+        .highlight-labels {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .highlight-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .highlight-label .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .highlight-label .dot.ai {
+            background: #00d1b2;
+            box-shadow: 0 0 10px rgba(0, 209, 178, 0.5);
+        }
+
+        .highlight-label .dot.human {
+            background: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        .comparison-videos {
+            display: grid;
+            gap: 2rem;
+        }
+
+        /* Two-column grid for side-by-side comparison cards */
+        .comparison-grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .comparison-grid-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            background: #fafafa;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .comparison-card-header {
+            padding: 1rem 1.25rem;
+            background: #f5f5f5;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-card-header h4 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .comparison-card video {
+            width: 100%;
+            display: block;
+        }
+
+        .comparison-card-body {
+            padding: 1.25rem;
+        }
+
+        .comparison-card-body p {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #4a4a4a;
+        }
+
+        .highlight-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: #363636;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+            margin-right: 0.25rem;
+        }
+
+        .comparison-labels {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 0.75rem;
+            background: #f0f0f0;
+        }
+
+        .comparison-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .comparison-label .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .comparison-label .dot.instruction {
+            background: #00d1b2;
+        }
+
+        .comparison-label .dot.no-instruction {
+            background: #ff6b6b;
+        }
+
+        .comparison-label .dot.action {
+            background: #3273dc;
+        }
+
+        .comparison-label .dot.no-action {
+            background: #ffdd57;
+        }
+
+        .video-smaller-wrapper {
+            margin: 0 auto;
+            padding: 1rem 0;
+        }
+
+        .video-smaller-wrapper video {
+            width: 100%;
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .video-smaller-wrapper {
+                max-width: 70%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .video-smaller-wrapper {
+                max-width: 90%;
+            }
+        }
+
+        /* Compact comparison card for smaller videos */
+        .comparison-card.compact {
+            max-width: 2200px;
+            margin: 0 auto;
+        }
+
+        .comparison-card.compact .compact-video-wrapper {
+            max-height: 1000px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .comparison-card.compact .compact-video-wrapper video {
+            width: 100%;
+            height: auto;
+            max-height: 550px;
+            object-fit: contain;
+        }
+
+        .comparison-card.compact .comparison-card-body {
+            padding: 1rem 1.25rem;
+        }
+
+        .comparison-card.compact .comparison-card-body p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-card.compact {
+                max-width: 100%;
+            }
+            .comparison-card.compact .compact-video-wrapper {
+                max-height: 320px;
+            }
+            .comparison-card.compact .compact-video-wrapper video {
+                max-height: 320px;
+            }
+        }
+
+        /* Medium comparison card - ADJUST THESE VALUES TO CONTROL SIZE */
+        .comparison-card.medium {
+            max-width: 1200px;  /* Controls overall card width - try 900px, 1000px, 1400px etc */
+            margin: 0 auto;
+        }
+
+        .comparison-card.medium .medium-video-wrapper {
+            max-height: 700px;  /* Controls max video height - try 500px, 600px, 800px etc */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .comparison-card.medium .medium-video-wrapper video {
+            width: 100%;
+            height: auto;
+            max-height: 700px;  /* Should match the wrapper max-height above */
+            object-fit: contain;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-card.medium {
+                max-width: 100%;
+            }
+            .comparison-card.medium .medium-video-wrapper {
+                max-height: 400px;
+            }
+            .comparison-card.medium .medium-video-wrapper video {
+                max-height: 400px;
+            }
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .method-card {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #eee;
+        }
+
+        .method-card h4 {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .method-card p {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border: 1px solid #eee;
+        }
+
+        .result-card h4 {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-card p {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .bibtex-section pre {
+            background: #f5f5f5;
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+
+        .bibtex-section code {
+            background: transparent;
+            color: #333;
+        }
+
+        .copy-btn {
+            margin-top: 0.75rem;
+        }
+
+        footer.footer {
+            padding: 3rem 1.5rem;
+            background: #fafafa;
+        }
+
+        .hf-icon {
+            width: 1.25em;
+            height: 1.25em;
+        }
+
+        .figure-container {
+            margin: 2rem 0;
+        }
+
+        .figure-container img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .figure-caption {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #666;
+            margin-top: 0.75rem;
+        }
+
+        /* Side-by-side figures */
+        .figure-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .figure-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .figure-item img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            flex-grow: 1;
+            object-fit: contain;
+        }
+
+        .figure-item .figure-caption {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .figure-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Stats (unified, centered, consistent) */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 180px;
+        }
+
+        .stat-item .number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 56px;
+            min-width: 180px;
+            padding: 0 1.25rem;
+            border-radius: 9999px;
+            background: #eef2f7;
+            color: #111827;
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: 0.2px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+
+        @supports (font-variant-numeric: tabular-nums) {
+          .stat-item .number { font-variant-numeric: tabular-nums lining-nums; }
+        }
+
+        .stat-item .label {
+            margin-top: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        @media (max-width: 768px) {
+            .publication-title {
+                font-size: 2.0rem;
+            }
+
+            .content p {
+                font-size: 1rem;
+            }
+
+            .highlight-labels {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .comparison-labels {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .stat-item { min-width: 160px; }
+            .stat-item .number {
+                min-width: 160px;
+                height: 52px;
+                font-size: 1.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-row { gap: 1.25rem; }
+            .stat-item { min-width: 140px; }
+            .stat-item .number {
+                min-width: 140px;
+                height: 44px;
+                font-size: 1.5rem;
+            }
+
+            .project-logo {
+                max-width: 100px;
+            }
+
+            .navbar-inner {
+                padding: 0 1rem;
+            }
+
+            .navbar-logo span {
+                display: none;
+            }
+
+            .navbar-links {
+                gap: 0.1rem;
+            }
+
+            .navbar-link {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.8rem;
+            }
+
+            .stat-item .label { font-size: 0.9rem; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-link {
+                padding: 0.35rem 0.5rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Jump to section sidebar */
+        .jump-nav {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .jump-nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .jump-nav-dot:hover {
+            background: #888;
+            transform: scale(1.2);
+        }
+
+        .jump-nav-dot.active {
+            background: #1a1a2e;
+            transform: scale(1.3);
+        }
+
+        .jump-nav-dot::before {
+            content: attr(data-label);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1a1a2e;
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .jump-nav-dot:hover::before {
+            opacity: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .jump-nav {
+                display: none;
+            }
+        }
+
+        /* Larger video containers */
+        .video-container-large {
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        .video-container-large video {
+            width: 100%;
+            display: block;
+            border-radius: 10px;
+        }
+
+        /* Unified explanation box */
+        .unified-explanation {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1.75rem 2rem;
+            margin-top: 2rem;
+        }
+
+        .unified-explanation p {
+            margin: 0;
+            font-size: 1.05rem;
+            line-height: 1.85;
+            color: #444;
+            text-align: justify;
+        }
+
+        .unified-explanation p b {
+            color: #1a1a2e;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Fixed Navigation Bar -->
+    <nav class="navbar-fixed">
+        <div class="navbar-inner">
+            <a href="#" class="navbar-logo">
+                <img src="p2.png" alt="P2P Logo">
+                <span>Open P2P</span>
+            </a>
+            <div class="navbar-links">
+                <a href="#abstract" class="navbar-link">Abstract</a>
+                <a href="#highlight" class="navbar-link">AI vs Human</a>
+                <a href="#dataset" class="navbar-link">Dataset</a>
+                <a href="#Policy Model" class="navbar-link">Policy Model</a>
+                <a href="#Evaluation" class="navbar-link">Evaluation</a>
+                <a href="#causality" class="navbar-link">Causality</a>
+                <a href="#bibtex" class="navbar-link">BibTeX</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Jump Navigation Dots (sidebar) -->
+    <div class="jump-nav">
+        <a href="#abstract" class="jump-nav-dot" data-label="Abstract" data-section="abstract"></a>
+        <a href="#highlight" class="jump-nav-dot" data-label="AI vs Human" data-section="highlight"></a>
+        <a href="#dataset" class="jump-nav-dot" data-label="Dataset" data-section="dataset"></a>
+        <a href="#Policy Model" class="jump-nav-dot" data-label="Policy Model" data-section="Policy Model"></a>
+        <a href="#Evaluation" class="jump-nav-dot" data-label="Evaluation" data-section="Evaluation"></a>
+        <a href="#causality" class="jump-nav-dot" data-label="Causality" data-section="causality"></a>
+        <a href="#bibtex" class="jump-nav-dot" data-label="BibTeX" data-section="bibtex"></a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <img src="p2.png" alt="Open P2P Logo" class="project-logo">
+                        <h1 class="title publication-title">Is scale all you need for behavior cloning? An open model for real time video game playing.</h1>
+                        
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">
+                                Yuguang Yue,
+                                Irakli Salia,
+                                Samuel Hunt,
+                                Chris Green,
+                                Wenzhe Shi,
+                                Jonathan J Hunt
+                            </span>
+                        </div>
+
+                        <div class="column has-text-centered">
+                            <div class="publication-links">
+                                <span class="link-block">
+                                    <a class="external-link button is-normal is-rounded is-dark" title="Coming Soon" disabled>
+                                        <span class="icon">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </span>
+                                        <span>Paper (Coming Soon)</span>
+                                    </a>
+                                </span>
+
+                                <span class="link-block">
+                                    <a target="_blank" href="https://github.com/elefant-ai/open-p2p" class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        <span>Code</span>
+                                    </a>
+                                </span>
+
+                                <span class="link-block">
+                                    <a target="_blank" href="https://huggingface.co/datasets/guaguaa/p2p-toy-examples" class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.svg" class="hf-icon" alt="Hugging Face">
+                                        </span>
+                                        <span>Sample Dataset (Full Dataset Coming Soon)</span>
+                                    </a>
+                                </span>
+
+                                <span class="link-block">
+                                    <a target="_blank" href="https://huggingface.co/guaguaa/open-p2p" class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.svg" class="hf-icon" alt="Hugging Face">
+                                        </span>
+                                        <span>Model</span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Banner -->
+    <!-- <section class="video-banner" style="padding: 0 1.5rem;">
+        <div class="video-container-large">
+            <video controls muted autoplay loop playsinline>
+                <source src="games_we_can_play.mp4" type="video/mp4">
+            </video>
+        </div>
+    </section> -->
+
+    <section class="video-banner" style="padding: 0 1.5rem;">
+        <div class="video-container-large">
+            <figure>
+                <video controls muted autoplay loop playsinline>
+                    <source src="games_we_can_play.mp4" type="video/mp4">
+                </video>
+                <figcaption class="has-text-centered is-size-6 mt-2">
+                    <i>Direct footage of <b>Open P2P</b> interacting with commercial games in <b>real-time</b>.</i>
+                </figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <br>
+
+    <!-- Abstract Section -->
+    <section class="section" id="abstract">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column">
+                    <h2 class="title is-3">Abstract</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            We introduce Open P2P, a <b>foundation model</b> for generalist gaming agents. 
+                            Our model demonstrates strong performance across diverse 3D gaming domains including action games, first-person shooters, social roblox games and etc.
+                            Running at <b>20 FPS</b>, the model operates in real-time, enabling seamless interaction with live game environments. 
+                            Through careful architecture design and large-scale training, we show that a single model can achieve competitive performance across multiple game types without game-specific fine-tuning.
+                            <br>
+                            Beyond performance, we systematically study the <b>scaling laws of behavior cloning</b>, examining how causal reasoning varies with model and data scale. We find that increasing both model capacity and dataset size naturally mitigates <b>causal confusion</b>, which is a known challenge where models learn to rely on spurious correlations rather than true causal signals. The findings suggest that scale itself can be a practical solution to causality issues in behavior cloning.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Highlight Section: AI vs Human -->
+    <section class="highlight-section" id="highlight">
+        <div class="video-container-large" style="padding: 0 1.5rem;">
+            <div class="has-text-centered" style="margin-bottom: 2rem;">
+                <h2 class="title is-3">
+                    <i class="fas fa-gamepad" style="margin-right: 0.5rem;"></i>
+                    AI Agent vs Human Player
+                </h2>
+                <p class="subtitle is-5">Watch our AI agent compete against a real human player in real-time gameplay. Watch it to the end to see it exhibit real human like behaviour of switching to side-arm when it runs out of ammo</p>
+            </div>
+            
+            <div class="highlight-video-container">
+                <video controls muted autoplay loop playsinline>
+                    <source src="highlight.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dataset Section -->
+    <section class="section" id="dataset">
+        <div class="container is-max-widescreen">
+            <h2 class="title is-3">Dataset</h2>
+            <div class="content has-text-justified">
+                <p>
+                    We release a large-scale dataset (WIP) of high-quality human gameplay spanning diverse 3D video games including FPS (DOOM, Quake, Call of Duty, etc.), racing (Need for Speed, etc.), Roblox games, and other popular video games. All gameplay is recorded at <b>20 FPS</b> by experienced players. Each frame is annotated with keyboard and mouse actions, and text instructions are provided when available.
+                </p>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="number">8,300+</div>
+                    <div class="label">Hours of Gameplay</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number">650M+</div>
+                    <div class="label">Image-Action Pairs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number">40+</div>
+                    <div class="label">Game Titles</div>
+                </div>
+            </div>
+
+            <div class="figure-container">
+                <img src="data-vis.png" alt="Example gameplay sequence with aligned action and text annotations">
+                <p class="figure-caption">Example gameplay sequence with aligned action and text annotations. Keyboard actions are simplified to WASD; arrows indicate mouse movement.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Method Section -->
+    <section class="section" id="Policy Model">
+        <div class="container is-max-widescreen">
+            <h2 class="title is-3">Policy Model</h2>
+            <div class="content has-text-justified">
+                <p>
+                    Our model, <b>Pixels2Play (P2P)</b>, is an action policy that takes visual observations and optional text instructions as input to output keyboard and mouse actions. 
+                    The model is designed for high-speed, real-time inference (20 Hz) on consumer-level GPUs. 
+                    The architecture is composed of a <b>backbone transformer</b> and a <b>lightweight action decoder</b>. The backbone transformer is responsible for sophisticated spatio-temporal reasoning between the visual inputs, text inputs, and the output action. 
+                    The action decoder then predicts the final mouse and keyboard actions based on a compressed <b>action-in token</b> generated by the backbone. This structure accelerates inference speed by a factor of 5 while maintaining high prediction accuracy. 
+                </p>
+                <p>
+                    Regarding inputs, the model employs an <b>EfficientNet-based image encoder</b> to compress visual observations into compact visual tokens, and a <b>Gemma text encoder</b> to compress text instructions into compact text tokens. 
+                    One ground truth action consists of eight tokens: four representing simultaneous keyboard actions, two representing mouse movement on the x and y axes, and two representing mouse button actions. 
+                    These ground truth action tokens are provided as input so the model can leverage prior actions to perform more like a human. To maintain the causality of the model, we designed a customized attention mask to ensure that the <b>action-in token</b> only attends to prior ground truth action tokens. 
+                </p>
+            </div>
+
+            <!-- <div class="figure-grid" style="grid-template-columns: 3fr 2fr; align-items: center;">
+                <div class="figure-item">
+                    <img src="arch.png" alt="Architecture of P2P model">
+                    <p class="figure-caption"><b>(a)</b> Transformer backbone with image, text, and action tokens.</p>
+                </div>
+                <div class="figure-item">
+                    <img src="mask.png" alt="Custom attention mask for causal action prediction">
+                    <p class="figure-caption"><b>(b)</b> Custom attention mask ensuring causal action prediction.</p>
+                </div>
+            </div> -->
+            <div class="figure-grid" style="display: grid; grid-template-columns: 4fr 1.5fr; align-items: center; gap: 20px;">
+    
+                <div class="figure-item">
+                    <img src="arch.png" alt="Architecture of P2P model" style="width: 100%; height: auto;">
+                    <p class="figure-caption has-text-centered mt-2">
+                        <b>(a)</b> Transformer backbone with image, text, and action tokens.
+                    </p>
+                </div>
+            
+                <div class="figure-item" style="text-align: center;">
+                    <img src="mask.png" alt="Custom attention mask" style="width: 80%; height: auto; margin: 0 auto;">
+                    <p class="figure-caption mt-2">
+                        <b>(b)</b> Custom attention mask ensuring causal action prediction.
+                    </p>
+                </div>
+            
+            </div>
+
+            <!-- <div class="method-grid">
+                <div class="method-card">
+                    <h4><i class="fas fa-eye"></i> Vision Encoder</h4>
+                    <p>EfficientNet-based encoder producing compact visual tokens for long temporal context.</p>
+                </div>
+
+                <div class="method-card">
+                    <h4><i class="fas fa-hand-pointer"></i> Action Decoder</h4>
+                    <p>Lightweight autoregressive decoder for keyboard and mouse action prediction.</p>
+                </div>
+
+                <div class="method-card">
+                    <h4><i class="fas fa-language"></i> Text Conditioning</h4>
+                    <p>Optional natural language instructions for controllable agent behavior.</p>
+                </div>
+
+                <div class="method-card">
+                    <h4><i class="fas fa-history"></i> Action Conditioning</h4>
+                    <p>Previous action context for temporally coherent, human-like gameplay.</p>
+                </div>
+            </div> -->
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+<section class="section" id="Evaluation">
+    <div class="container is-max-widescreen">
+        <h2 class="title is-3">Evaluation</h2>
+        <div class="content has-text-justified">
+            <p>
+                We present the evaluation results discussed in paper Section 4.2. We compare 150M, 300M, 600M and 1.2B model on nine game checkpoints, then use human judgement to evaluate the performance of the model.
+            </p>
+        </div>
+
+        <div class="comparison-videos">
+            <!-- Model Size Comparison -->
+            <div class="comparison-card">
+                <div class="comparison-card-header">
+                    <h4>Model Size Gameplay Comparison</h4>
+                </div>
+                <video controls muted autoplay loop playsinline>
+                    <source src="model_comparison.mp4" type="video/mp4">
+                </video>
+                <div class="comparison-card-body">
+                    <p>
+                        The 1.2B model shows a general consistent improvement over the smaller models in all nine cases.
+                    </p>
+                </div>
+            </div>
+
+            <br>
+            We then show the instruction following capacity of the model, use 1.2B model as an example. We also show the importance of action conditioning which is the motivation of using a action-conditioned model architecture. 
+            <br>
+            <!-- Side by Side: Instruction Following & Action Conditioning -->
+            <div class="comparison-grid-2col">
+                <!-- Instruction Following -->
+                <div class="comparison-card">
+                    <div class="comparison-card-header">
+                        <h4><i class="fas fa-language" style="margin-right: 0.5rem;"></i>Instruction Following</h4>
+                    </div>
+                    <video controls muted autoplay loop playsinline>
+                        <source src="instruct_comparison.mp4" type="video/mp4">
+                    </video>
+                    <div class="comparison-labels">
+                        <span class="comparison-label">
+                            <span class="dot instruction"></span>
+                            Press the red button
+                        </span>
+                        <span class="comparison-label">
+                            <span class="dot no-instruction"></span>
+                            No instruction
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Action Conditioning -->
+                <div class="comparison-card">
+                    <div class="comparison-card-header">
+                        <h4><i class="fas fa-history" style="margin-right: 0.5rem;"></i>Action Conditioning</h4>
+                    </div>
+                    <video controls muted autoplay loop playsinline>
+                        <source src="action_comparison.mp4" type="video/mp4">
+                    </video>
+                    <div class="comparison-labels">
+                        <span class="comparison-label">
+                            <span class="dot action"></span>
+                            Condition on prior action
+                        </span>
+                        <span class="comparison-label">
+                            <span class="dot no-action"></span>
+                            Do not condition on prior action
+                        </span>
+                    </div>
+                    <div class="comparison-card-body mt-5 p-4" style="background-color: #d0cdcd; border-radius: 8px;">
+                        By conditioning the model on prior actions, <b>Open P2P</b> maintains temporal coherence and learns more human-like behaviors. 
+                        In contrast, when the model does not incorporate prior actions, 
+                        it tends to take actions continuously, which deviates from natural human behavior. 
+                        Human players typically act at a lower frequency, for example, they may maintain the same direction for several seconds or pause briefly to reassess before acting. 
+                        As a result, the action-conditioned model is able to capture these temporal patterns, leading to smoother control and more realistic, human-like behavior.
+                    </div>
+
+                    <div class="comparison-card-body mt-6 p-4" style="background-color: #d0cdcd; border-radius: 8px;">
+                        We also demonstrate that the model is capable of following text instructions. As shown in the video, the player must press three consecutive red buttons to open the door and enter the next room. However, the action of pressing a red button can be subtle: many annotators press the button while turning around, rather than executing a clearly distinguishable button-press action. As a result, this behavior makes it difficult for the action model to infer that pressing the buttons is necessary to complete the maze, since it primarily mimics the annotators’ trajectories.
+                        <br>
+                        Consequently, without any text instruction, the model presses all three buttons in only about 20% of the trials.
+                        <br>
+                        In contrast, when provided with text instructions that specify the objective, the model can better infer the intent of the trajectory and learn a more effective policy. As shown, when the model is prompted to press the red buttons, it successfully presses all three buttons in approximately 80% of the trials, representing a substantial improvement over the model without text instruction.
+                        <br>
+                        These results highlight the importance of text instructions for learning effective action policies. However, incorporating text instructions requires additional text encoding, which reduces the model’s inference speed (FPS).
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section" id="causality">
+    <div class="container is-max-desktop">
+        <h2 class="title is-3">Causality and Scaling</h2>
+        <div class="content has-text-justified">
+            <p>
+                A central challenge in behavior cloning is <b>causal confusion</b>—the tendency for models to rely on spurious correlations (like UI elements or previous actions) rather than the true environmental causes of an action. We investigate the relationship between model scale and causal reasoning through both controlled toy environments and large-scale experiments.
+            </p>
+        </div>
+
+        <div class="subsection mt-6">
+            <h3 class="subtitle is-4">1. Causality in a Controlled Toy Environment</h3>
+            
+            <div class="figure-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: start; margin-bottom: 2rem;">
+                <div class="figure-item">
+                    <img src="toy_problem_env.jpeg" alt="Toy environment visualization" style="width: 100%; height: auto; border-radius: 4px; border: 1px solid #ddd;">
+                    <p class="figure-caption has-text-centered mt-2">
+                        <b>(a)</b> The agent must distinguish between the <b>causal feature</b> (obstacle) and a <b>correlated distractor</b> (previous brake light).
+                    </p>
+                </div>
+                <div class="figure-item">
+                    <img src="toy_problem.png" alt="Learning speed results" style="width: 100%; height: auto; border-radius: 4px; border: 1px solid #ddd;">
+                    <p class="figure-caption has-text-centered mt-2">
+                        <b>(b)</b> Learning curves demonstrating that increased network depth accelerates the discovery of causally correct policies.
+                    </p>
+                </div>
+            </div>
+
+            <div class="content has-text-justified">
+                <p>
+                    In this controlled setup, an optimal linear policy exists that can solve the task. However, we found that standard gradient descent fails to find this solution in linear models. By <b>increasing network depth and adding non-linearity</b>, the optimization process is better able to overcome spurious correlations. These results suggest that increased capacity and depth do not just improve performance—they actively facilitate the discovery of true causal signals during training.
+                </p>
+            </div>
+        </div>
+
+        <hr style="margin: 3rem 0; opacity: 0.5;">
+
+        <div class="subsection">
+            <h3 class="subtitle is-4">2. Empirical Evidence in Large-Scale Environments</h3>
+            
+            <div class="columns is-centered">
+                <div class="column is-four-fifths">
+                    <div class="figure-item">
+                        <img src="causality_vs_frames.png" alt="Causality score increases with model size and dataset size" style="width: 100%; height: auto; border-radius: 4px;">
+                        <p class="figure-caption has-text-centered mt-2">
+                            <b>Figure 4:</b> Causal reasoning scores improve significantly as both <b>model capacity</b> and <b>training data volume</b> increase.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content has-text-justified mt-5">
+                <p>
+                    In our full-scale experiments, we observed an empirical phenomenon that mirrors the findings from the toy example. 
+                </p>
+                <p>
+                    We found that increasing <b>model parameters</b> and <b>dataset volume</b> naturally mitigates causal confusion. Even without explicit architectural interventions to address causality, larger models demonstrate a superior ability to distinguish between essential environmental cues and non-causal distractors. This suggests that <b>scale</b> provides a practical, robust solution to the causal challenges inherent in generalist gaming agents.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Causality Section -->
+    <!-- <section class="section" id="causality">
+        <div class="container is-max-widescreen">
+            <h2 class="title is-3">Causality Analysis</h2>
+            <div class="content has-text-justified">
+                <p>
+                    One challenge posed by behavior cloning when condition on prior action is the <b>causal confusion</b>, which is a known challenge where models tends to just predict the action based on the prior action without considering the visual observations. 
+                    We demonstrate this phenomenon with a simple toy example first. 
+                </p>
+            </div>
+
+            <div class="figure-container" style="max-width: 800px; margin: 2rem auto;">
+                <img src="causality_vs_frames.png" alt="Causality score increases with model size and dataset size">
+                <p class="figure-caption">Causality score versus dataset size across model scales. Larger models with more data achieve higher causality scores, indicating stronger reliance on visual observations.</p>
+            </div>
+        </div>
+    </section> -->
+
+
+    <!-- BibTeX Section -->
+    <section class="section bibtex-section" id="bibtex">
+        <div class="container is-max-widescreen content">
+            <h2 class="title is-3">BibTeX</h2>
+            <!-- <pre><code>@misc{OpenP2P,
+  title        = {Open P2P: A Foundation Model for Gaming Agents},
+  author       = {Yuguang Yue and Jonathan J Hunt and Samuel Hunt and Chris Green and Wenzhe Shi and Irakli Salia},
+  year         = {2025},
+  howpublished = {\url{https://project-url.com/}},
+}</code></pre> -->
+Coming soon...
+            <!-- <button class="button is-small is-dark copy-btn" onclick="copyBibtex()">
+                <span class="icon"><i class="fas fa-copy"></i></span>
+                <span>Copy</span>
+            </button> -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column has-text-centered">
+                    <div class="content">
+                        <figure class="image is-inline-block">
+                            <img src="p2.png" alt="Player2 Logo" style="max-height: 50px;">
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const videos = document.querySelectorAll('video');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.play();
+                    } else {
+                        entry.target.pause();
+                    }
+                });
+            }, { threshold: 0.25 });
+            
+            videos.forEach(video => {
+                observer.observe(video);
+            });
+
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.navbar-link');
+            const jumpDots = document.querySelectorAll('.jump-nav-dot');
+
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === '#' + id) {
+                                link.classList.add('active');
+                            }
+                        });
+                        jumpDots.forEach(dot => {
+                            dot.classList.remove('active');
+                            if (dot.getAttribute('data-section') === id) {
+                                dot.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { 
+                threshold: 0.2,
+                rootMargin: '-80px 0px -50% 0px'
+            });
+
+            sections.forEach(section => {
+                sectionObserver.observe(section);
+            });
+        });
+
+        function copyBibtex() {
+            const bibtex = `@misc{OpenP2P,
+  title        = {Open P2P: A Foundation Model for Gaming Agents},
+  author       = {Yuguang Yue and Jonathan J Hunt and Samuel Hunt and Chris Green and Wenzhe Shi and Irakli Salia},
+  year         = {2025},
+  howpublished = {\\url{https://project-url.com/}},
+}`;
+            navigator.clipboard.writeText(bibtex).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.innerHTML = '<span class="icon"><i class="fas fa-check"></i></span><span>Copied!</span>';
+                setTimeout(() => {
+                    btn.innerHTML = '<span class="icon"><i class="fas fa-copy"></i></span><span>Copy</span>';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
