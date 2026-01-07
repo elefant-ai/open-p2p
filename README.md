@@ -67,11 +67,28 @@ uv run python scripts/download_checkpoints.py <150M|300M|600M|1200M>
 ```
 
 ### Download Sample Dataset
+
+There are bunch of args you can set for downloading toy dataset/part of the dataset or the output folder.
+
+To download the toy dataset you can run
+```bash
+uv run python scripts/download_data.py --toy
+```
+
+To download the full dataset you can run
 ```bash
 uv run python scripts/download_data.py
 ```
 
-> **Note:** We are working on releasing the full dataset.
+To download specific batches of the full dataset, use the `--start` and `--end` arguments to specify a range (inclusive):
+```bash
+uv run python scripts/download_data.py --start 1 --end 5
+```
+
+You can also specify a custom output directory with `--output`:
+```bash
+uv run python scripts/download_data.py --output my_dataset
+```
 
 ### Training
 
