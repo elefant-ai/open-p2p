@@ -821,7 +821,7 @@
                 <div class="columns is-centered">
                     <div class="column has-text-centered">
                         <img src="p2.png" alt="Open P2P Logo" class="project-logo">
-                        <h1 class="title publication-title">Is scale all you need for behavior cloning? An open model for real time video game playing.</h1>
+                        <h1 class="title publication-title">Scaling Behavior Cloning Improves Causality: An Open Model for Real-Time Video Game Playing</h1>
                         
                         <div class="is-size-5 publication-authors">
                             <span class="author-block">
@@ -855,16 +855,16 @@
                                 </span>
 
                                 <span class="link-block">
-                                    <a target="_blank" href="https://huggingface.co/datasets/guaguaa/p2p-toy-examples" class="external-link button is-normal is-rounded is-dark">
+                                    <a target="_blank" href="https://huggingface.co/datasets/elefantai/p2p-full-data" class="external-link button is-normal is-rounded is-dark">
                                         <span class="icon">
                                             <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.svg" class="hf-icon" alt="Hugging Face">
                                         </span>
-                                        <span>Sample Dataset (Full Dataset Coming Soon)</span>
+                                        <span>Dataset</span>
                                     </a>
                                 </span>
 
                                 <span class="link-block">
-                                    <a target="_blank" href="https://huggingface.co/guaguaa/open-p2p" class="external-link button is-normal is-rounded is-dark">
+                                    <a target="_blank" href="https://huggingface.co/elefantai/open-p2p" class="external-link button is-normal is-rounded is-dark">
                                         <span class="icon">
                                             <img src="https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.svg" class="hf-icon" alt="Hugging Face">
                                         </span>
@@ -911,12 +911,9 @@
                     <h2 class="title is-3">Abstract</h2>
                     <div class="content has-text-justified">
                         <p>
-                            We introduce Open P2P, a <b>foundation model</b> for generalist gaming agents. 
-                            Our model demonstrates strong performance across diverse 3D gaming domains including action games, first-person shooters, social roblox games and etc.
-                            Running at <b>20 FPS</b>, the model operates in real-time, enabling seamless interaction with live game environments. 
-                            Through careful architecture design and large-scale training, we show that a single model can achieve competitive performance across multiple game types without game-specific fine-tuning.
+                            Behavior cloning is enjoying a resurgence in popularity as scaling both model and data sizes proves to provide a strong starting point for many tasks of interest. In this work, we introduce <b>an open recipe</b> for training a video game playing foundation model designed for inference in realtime on a consumer GPU. We release all <b>8300+ hours of high quality human gameplay, training and inference code, and pretrained checkpoints under an open license</b>. We show that our best model is capable of playing a variety of 3D video games at a level competitive with human play.
                             <br>
-                            Beyond performance, we systematically study the <b>scaling laws of behavior cloning</b>, examining how causal reasoning varies with model and data scale. We find that increasing both model capacity and dataset size naturally mitigates <b>causal confusion</b>, which is a known challenge where models learn to rely on spurious correlations rather than true causal signals. The findings suggest that scale itself can be a practical solution to causality issues in behavior cloning.
+                            We use this recipe to systematically examine the scaling laws of behavior cloning to understand how the model's performance and causal reasoning varies with model and data scale. We first show in a <b>simple toy problem</b> that, for some types of causal reasoning, increasing both the amount of training data and the depth of the network results in the model learning a more causal policy. We then systematically study how causality varies with the number of parameters (and depth) and training steps in scaled models of up to 1.2 billion parameters, and we find similar scaling results to what we observe in the toy problem.
                         </p>
                     </div>
                 </div>
@@ -949,7 +946,7 @@
             <h2 class="title is-3">Dataset</h2>
             <div class="content has-text-justified">
                 <p>
-                    We release a large-scale dataset (WIP) of high-quality human gameplay spanning diverse 3D video games including FPS (DOOM, Quake, Call of Duty, etc.), racing (Need for Speed, etc.), Roblox games, and other popular video games. All gameplay is recorded at <b>20 FPS</b> by experienced players. Each frame is annotated with keyboard and mouse actions, and text instructions are provided when available.
+                    We release a large-scale dataset of high-quality human gameplay spanning diverse 3D video games including FPS (DOOM, Quake, Call of Duty, etc.), racing (Need for Speed, etc.), Roblox games, and other popular video games. All gameplay is recorded at <b>20 FPS</b> by experienced players. Each frame is annotated with <b>keyboard and mouse actions</b>, and <b>text instructions</b> are provided when available.
                 </p>
             </div>
 
@@ -984,12 +981,12 @@
                     Our model, <b>Pixels2Play (P2P)</b>, is an action policy that takes visual observations and optional text instructions as input to output keyboard and mouse actions. 
                     The model is designed for high-speed, real-time inference (20 Hz) on consumer-level GPUs. 
                     The architecture is composed of a <b>backbone transformer</b> and a <b>lightweight action decoder</b>. The backbone transformer is responsible for sophisticated spatio-temporal reasoning between the visual inputs, text inputs, and the output action. 
-                    The action decoder then predicts the final mouse and keyboard actions based on a compressed <b>action-in token</b> generated by the backbone. This structure accelerates inference speed by a factor of 5 while maintaining high prediction accuracy. 
+                    The action decoder then predicts the final mouse and keyboard actions based on a compressed <b>action prediction token</b> generated by the backbone. This structure accelerates inference speed by a factor of 5 while maintaining high prediction accuracy. 
                 </p>
                 <p>
-                    Regarding inputs, the model employs an <b>EfficientNet-based image encoder</b> to compress visual observations into compact visual tokens, and a <b>Gemma text encoder</b> to compress text instructions into compact text tokens. 
+                    The model employs an <b>EfficientNet-based image encoder</b> to compress visual observations into compact visual tokens, and a <b>Gemma text encoder</b> to compress text instructions into compact text tokens. 
                     One ground truth action consists of eight tokens: four representing simultaneous keyboard actions, two representing mouse movement on the x and y axes, and two representing mouse button actions. 
-                    These ground truth action tokens are provided as input so the model can leverage prior actions to perform more like a human. To maintain the causality of the model, we designed a customized attention mask to ensure that the <b>action-in token</b> only attends to prior ground truth action tokens. 
+                    These ground truth action tokens are provided as input so the model can leverage prior actions to perform more like a human. To maintain the causality of the model, we designed a customized attention mask to ensure that the <b>action prediction token</b> only attends to prior ground truth action tokens. 
                 </p>
             </div>
 
@@ -1006,16 +1003,18 @@
             <div class="figure-grid" style="display: grid; grid-template-columns: 4fr 1.5fr; align-items: center; gap: 20px;">
     
                 <div class="figure-item">
-                    <img src="arch.png" alt="Architecture of P2P model" style="width: 100%; height: auto;">
+                    <img src="arch.png" alt="Architecture of P2P model" style="width: 90%; height: auto;">
                     <p class="figure-caption has-text-centered mt-2">
-                        <b>(a)</b> Transformer backbone with image, text, and action tokens.
+                        <b>(a)</b> Architecture of P2P. The core policy transformer and action decoder are both decoder-only transformers.
+                        Each timestep begins with a text token. Since many frames do not contain a text annotation there is a default text token used on these frames. This is followed by one image token from video frame 
+                        followed by a learnable "reasoning" token that grants the model extra computation. The policy transformer then outputs a single action prediction token. A smaller transformer, the action decoder, then auto-regressively transforms and samples the single action prediction token into the full action space. Then the true action tokens are input so that action prediction token at time t+1 can attend to the true action prediction tokens from time t.
                     </p>
                 </div>
             
                 <div class="figure-item" style="text-align: center;">
-                    <img src="mask.png" alt="Custom attention mask" style="width: 80%; height: auto; margin: 0 auto;">
+                    <img src="mask.png" alt="Custom attention mask" style="width: 100%; height: auto; margin: 0 auto;">
                     <p class="figure-caption mt-2">
-                        <b>(b)</b> Custom attention mask ensuring causal action prediction.
+                        <b>(b)</b> Attention mask used in our transformer policy (green denotes 1 and gray 0). This custom mask ensures the action prediction token at time t cannot attend to the ground truth action at time t. Note that no other tokens attend to action prediction token to stabilize the training process. 
                     </p>
                 </div>
             
