@@ -90,8 +90,6 @@ You can also specify a custom output directory with `--output`:
 uv run python scripts/download_data.py --output my_dataset
 ```
 
-> **Note:** We are working on releasing the full dataset.
-
 ### Training
 
 All dependencies are handled by `uv`.
