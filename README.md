@@ -2,7 +2,7 @@
 
 **Open Pixel2Play (P2P)** is an open foundation model trained to play video games in real time. The model takes **visual input (images) and text instructions** and outputs **keyboard and mouse actions**, enabling direct interaction with real game environments.
 
-P2P is trained on **8,000+ hours of human-annotated gameplay videos**. We are actively working on releasing the full dataset. In the meantime, a **toy sample dataset** is available on [Hugging Face](https://huggingface.co/datasets/guaguaa/p2p-toy-examples).
+P2P is trained on **8,000+ hours of human-annotated gameplay videos**. We open-sourced our **full training dataset** on [HuggingFace](https://huggingface.co/datasets/elefantai/p2p-full-data). In the meantime, a [toy sample dataset](https://huggingface.co/datasets/guaguaa/p2p-toy-examples) is available for inspection too.
 
 Our smallest model (**150M parameters**) can be trained on **8× H100 GPUs in ~70 hours**. The largest model (**1.2B parameters**) is trained on **8× H100 GPUs for ~140 hours**
 
