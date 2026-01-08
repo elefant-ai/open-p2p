@@ -1,3 +1,4 @@
+![Open Pixel2Play Banner](assets/banner.png)
 # Open Pixel2Play (P2P)
 
 **Open Pixel2Play (P2P)** is an open foundation model trained to play video games in real time. The model takes **visual input (images) and text instructions** and outputs **keyboard and mouse actions**, enabling direct interaction with real game environments.
