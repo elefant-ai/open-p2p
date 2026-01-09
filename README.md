@@ -1,6 +1,6 @@
 # Open Pixel2Play (P2P)
 
-**Open Pixel2Play (P2P)** is an open foundation model trained to play video games in real time. The model takes **visual input (images) and text instructions** and outputs **keyboard and mouse actions**, enabling direct interaction with real game environments. This is the official repo for [paper](https://arxiv.org/abs/2601.04575).
+**Open Pixel2Play (P2P)** is an open foundation model trained to play video games in real time. The model takes **visual input (images) and text instructions** and outputs **keyboard and mouse actions**, enabling direct interaction with real game environments. This is the official repo for paper [Scaling Behavior Cloning Improves Causal Reasoning: An Open Model for Real-Time Video Game Playing](https://arxiv.org/abs/2601.04575).
 
 P2P is trained on **8,000+ hours of human-annotated gameplay videos**. We open-sourced our **full training dataset** on [HuggingFace](https://huggingface.co/datasets/elefantai/p2p-full-data). In the meantime, a [toy sample dataset](https://huggingface.co/datasets/guaguaa/p2p-toy-examples) is available for inspection too.
 
