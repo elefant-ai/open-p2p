@@ -1,6 +1,6 @@
 # Open Pixel2Play (P2P)
 
-**Open Pixel2Play (P2P)** is an open foundation model trained to play video games in real time. The model takes **visual input (images) and text instructions** and outputs **keyboard and mouse actions**, enabling direct interaction with real game environments.
+**Open Pixel2Play (P2P)** is an open foundation model trained to play video games in real time. The model takes **visual input (images) and text instructions** and outputs **keyboard and mouse actions**, enabling direct interaction with real game environments. This is the official repo for [paper](https://arxiv.org/abs/2601.04575).
 
 P2P is trained on **8,000+ hours of human-annotated gameplay videos**. We open-sourced our **full training dataset** on [HuggingFace](https://huggingface.co/datasets/elefantai/p2p-full-data). In the meantime, a [toy sample dataset](https://huggingface.co/datasets/guaguaa/p2p-toy-examples) is available for inspection too.
 
@@ -11,16 +11,6 @@ This repository contains:
 - The full **training pipeline** for P2P models
 - **Inference code** for running trained models
 - Integration with [**Recap**](https://github.com/elefant-ai/recap) for real-time interaction with commercial games on Windows
-
----
-
-## Repository Overview
-
-This repo provides everything needed to:
-
-- Train P2P models from scratch
-- Run offline validation
-- Serve models for real-time inference and connect models to real games via the **Recap** system
 
 ---
 
@@ -257,5 +247,13 @@ After stopping, a folder will open containing:
 ---
 
 ## Paper & Citation
-
-Coming soon.
+If you use the data or model in your research, please cite our paper:
+```bibtex
+@misc{yue2026scaling,
+      title={Scaling Behavior Cloning Improves Causal Reasoning: An Open Model for Real-Time Video Game Playing}, 
+      author={Yuguang Yue and Irakli Salia and Samuel Hunt and Chris Green and Wenzhe Shi and Jonathan J. Hunt},
+      year={2026},
+      eprint={2601.04575},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
