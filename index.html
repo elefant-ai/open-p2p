@@ -837,11 +837,11 @@
                         <div class="column has-text-centered">
                             <div class="publication-links">
                                 <span class="link-block">
-                                    <a class="external-link button is-normal is-rounded is-dark" title="Coming Soon" disabled>
+                                    <a target="_blank" href="https://arxiv.org/abs/2601.04575" class="external-link button is-normal is-rounded is-dark">
                                         <span class="icon">
                                             <i class="fas fa-file-pdf"></i>
                                         </span>
-                                        <span>Paper (Coming Soon)</span>
+                                        <span>Paper</span>
                                     </a>
                                 </span>
 
@@ -1221,17 +1221,23 @@
     <section class="section bibtex-section" id="bibtex">
         <div class="container is-max-widescreen content">
             <h2 class="title is-3">BibTeX</h2>
-            <!-- <pre><code>@misc{OpenP2P,
-  title        = {Open P2P: A Foundation Model for Gaming Agents},
-  author       = {Yuguang Yue and Jonathan J Hunt and Samuel Hunt and Chris Green and Wenzhe Shi and Irakli Salia},
-  year         = {2025},
-  howpublished = {\url{https://project-url.com/}},
-}</code></pre> -->
-Coming soon...
-            <!-- <button class="button is-small is-dark copy-btn" onclick="copyBibtex()">
-                <span class="icon"><i class="fas fa-copy"></i></span>
-                <span>Copy</span>
-            </button> -->
+            <div style="position: relative;">
+                <pre><code id="bibtex-content">@misc{yue2026scaling,
+      title={Scaling Behavior Cloning Improves Causal Reasoning: An Open Model for Real-Time Video Game Playing}, 
+      author={Yuguang Yue and Irakli Salia and Samuel Hunt and Chris Green and Wenzhe Shi and Jonathan J. Hunt},
+      year={2026},
+      eprint={2601.04575},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2601.04575}
+}</code></pre>
+                <button class="button is-small is-dark copy-btn" 
+                        style="position: absolute; top: 10px; right: 10px;" 
+                        onclick="copyBibtex()">
+                    <span class="icon"><i class="fas fa-copy"></i></span>
+                    <span>Copy</span>
+                </button>
+            </div>
         </div>
     </section>
 
@@ -1301,16 +1307,21 @@ Coming soon...
         });
 
         function copyBibtex() {
-            const bibtex = `@misc{OpenP2P,
-  title        = {Open P2P: A Foundation Model for Gaming Agents},
-  author       = {Yuguang Yue and Jonathan J Hunt and Samuel Hunt and Chris Green and Wenzhe Shi and Irakli Salia},
-  year         = {2025},
-  howpublished = {\\url{https://project-url.com/}},
+            const bibtex = `@misc{yue2026scaling,
+      title={Scaling Behavior Cloning Improves Causal Reasoning: An Open Model for Real-Time Video Game Playing}, 
+      author={Yuguang Yue and Irakli Salia and Samuel Hunt and Chris Green and Wenzhe Shi and Jonathan J. Hunt},
+      year={2026},
+      eprint={2601.04575},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2601.04575}
 }`;
             navigator.clipboard.writeText(bibtex).then(() => {
                 const btn = document.querySelector('.copy-btn');
+                // Temporarily change button to "Copied!" with a checkmark
                 btn.innerHTML = '<span class="icon"><i class="fas fa-check"></i></span><span>Copied!</span>';
                 setTimeout(() => {
+                    // Revert button back to "Copy"
                     btn.innerHTML = '<span class="icon"><i class="fas fa-copy"></i></span><span>Copy</span>';
                 }, 2000);
             });
