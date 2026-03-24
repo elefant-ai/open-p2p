@@ -260,6 +260,64 @@ After stopping, a folder will open containing:
 > **How it works:** Recap captures screenshots from the selected window, sends frames to the inference server, receives predicted actions, and executes keyboard/mouse inputs in real time.
 
 ---
+<a id="tcp-remote"></a>
+#### Alternative Setup: TCP Remote Inference (Linux + Windows)
+
+If you want to run the inference server on a **separate Linux machine** (e.g., a GPU server) and Recap on a **Windows game machine**, you can use TCP transport instead of the default UDS/WSL setup. This removes the need for WSL and socat on the Windows machine entirely.
+
+**Architecture:**
+- **Linux Machine (GPU)**: Runs open-p2p inference server, listening on TCP
+- **Windows Machine (Game)**: Runs Recap, connects to the inference server over LAN
+
+**Step 1: Start the Inference Server (Linux Machine)**
+
+```bash
+uv run elefant/policy_model/inference.py \
+  --config checkpoints/150M/model_config.yaml \
+  --checkpoint_path checkpoints/150M/checkpoint-step=00500000.ckpt \
+  --transport tcp \
+  --bind-port 9000
+```
+
+| CLI Option | Env Variable | Default | Description |
+|------------|-------------|---------|-------------|
+| `--transport` | — | `uds` | Transport protocol: `uds` or `tcp` |
+| `--bind-host` | `P2P_BIND_HOST` | `0.0.0.0` | TCP bind address |
+| `--bind-port` | `P2P_BIND_PORT` | `9000` | TCP bind port |
+
+> **Note:** `--bind-host` and `--bind-port` are only used when `--transport tcp` is specified. The env variables serve as defaults and can be overridden by CLI arguments.
+
+**Step 2: Start Recap (Windows Game Machine)**
+
+Set the environment variables to point Recap at the inference server, then launch as usual:
+
+```bash
+just trace-tcp 192.168.1.100
+# or with a custom port:
+just trace-tcp 192.168.1.100 8080
+```
+
+Alternatively, set the environment variables manually:
+
+```bash
+set RECAP_INFERENCE_HOST=192.168.1.100
+set RECAP_INFERENCE_PORT=9000
+just trace
+```
+
+| Env Variable | Default | Description |
+|-------------|---------|-------------|
+| `RECAP_INFERENCE_HOST` | *(unset = UDS mode)* | Inference server IP. Setting this enables TCP mode |
+| `RECAP_INFERENCE_PORT` | `9000` | Inference server TCP port |
+
+> **Note:** When `RECAP_INFERENCE_HOST` is not set, Recap falls back to the default UDS connection via WSL socat (`/tmp/uds.recap`).
+
+**Requirements:**
+- Both machines must be on the **same local network (LAN)**
+- Use **wired connection** for best results (TCP adds ~1-2ms latency on wired LAN)
+- Ensure the TCP port (default `9000`) is open on the Linux machine's firewall
+
+---
 <a id="moonlight"></a>
 #### Alternative Setup for Windows Inference: Streaming with Moonlight (Thanks to @euminds!)
 
