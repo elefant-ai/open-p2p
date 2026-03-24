@@ -500,8 +500,16 @@ class InferenceServer(UnixDomainSocketInferenceServer):
         metrics_window_seconds: float = 60.0,
         checkpoint_path: str = None,
         input_text: bool = False,
+        transport: str = "uds",
+        bind_host: str = "0.0.0.0",
+        bind_port: int = 9000,
     ):
-        super().__init__(uds_path=UDS_PATH)
+        super().__init__(
+            transport=transport,
+            uds_path=UDS_PATH,
+            bind_host=bind_host,
+            bind_port=bind_port,
+        )
         self.shared_text_state = SharedTextInputState(input_text=input_text)
         self.input_text = input_text
         self.terminal_listener_task = None
@@ -1033,6 +1041,9 @@ def serve_model(
     metrics_window_seconds: float = 60.0,
     checkpoint_path: str = None,
     input_text: bool = False,
+    transport: str = "uds",
+    bind_host: str = "0.0.0.0",
+    bind_port: int = 9000,
 ):
     logging.basicConfig(level=logging.INFO, force=True)
 
@@ -1048,6 +1059,9 @@ def serve_model(
         metrics_window_seconds=metrics_window_seconds,
         checkpoint_path=checkpoint_path,
         input_text=input_text,
+        transport=transport,
+        bind_host=bind_host,
+        bind_port=bind_port,
     )
 
     # Setup signal handlers for non-asyncio contexts
@@ -1069,8 +1083,8 @@ def serve_model(
     except Exception as e:
         logging.exception(f"Error running inference server: {e}")
     finally:
-        # Clean up if UDS file still exists
-        if os.path.exists(UDS_PATH):
+        # Clean up if UDS file still exists (only relevant in UDS mode)
+        if transport == "uds" and os.path.exists(UDS_PATH):
             try:
                 os.unlink(UDS_PATH)
                 logging.info(f"Removed UDS file: {UDS_PATH}")
@@ -1118,6 +1132,25 @@ def _main():
         default=False,
         help="Input text from stdin.",
     )
+    parser.add_argument(
+        "--transport",
+        type=str,
+        default="uds",
+        choices=["uds", "tcp"],
+        help="Transport protocol: 'uds' (Unix Domain Socket) or 'tcp'.",
+    )
+    parser.add_argument(
+        "--bind-host",
+        type=str,
+        default=os.environ.get("P2P_BIND_HOST", "0.0.0.0"),
+        help="TCP bind host (default: 0.0.0.0). Env: P2P_BIND_HOST",
+    )
+    parser.add_argument(
+        "--bind-port",
+        type=int,
+        default=int(os.environ.get("P2P_BIND_PORT", "9000")),
+        help="TCP bind port (default: 9000). Env: P2P_BIND_PORT",
+    )
     args = parser.parse_args()
 
     if args.use_full_inference and args.use_manual_sampling:
@@ -1149,6 +1182,9 @@ def _main():
             metrics_window_seconds=args.metrics_window_seconds,
             checkpoint_path=args.checkpoint_path,
             input_text=args.input_text,
+            transport=args.transport,
+            bind_host=args.bind_host,
+            bind_port=args.bind_port,
         )
 
 

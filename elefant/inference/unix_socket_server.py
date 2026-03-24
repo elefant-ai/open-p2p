@@ -11,27 +11,47 @@ UDS_PATH = "/tmp/uds.recap"
 
 
 class UnixDomainSocketInferenceServer(abc.ABC):
-    """Base class for inference servers that communicate over a Unix domain socket."""
+    """Base class for inference servers that communicate over a Unix domain socket or TCP."""
 
-    def __init__(self, uds_path: str = UDS_PATH):
+    def __init__(
+        self,
+        transport: str = "uds",
+        uds_path: str = UDS_PATH,
+        bind_host: str = "0.0.0.0",
+        bind_port: int = 9000,
+    ):
+        self.transport = transport
         self.uds_path = uds_path
+        self.bind_host = bind_host
+        self.bind_port = bind_port
         self.server: asyncio.AbstractServer | None = None
         self.shutdown_event = asyncio.Event()
         self.running = True
 
     async def _start_server(self) -> None:
-        try:
-            os.unlink(self.uds_path)
-        except OSError:
-            if os.path.exists(self.uds_path):
-                raise OSError(
-                    f"Could not remove existing UDS file {self.uds_path}. Please remove it manually."
-                )
-        self.server = await asyncio.start_unix_server(
-            self._handle_client, self.uds_path, limit=200000
-        )
-        os.chmod(self.uds_path, 0o777)
-        logging.info(f"Server started on {self.uds_path}")
+        if self.transport == "tcp":
+            self.server = await asyncio.start_server(
+                self._handle_client,
+                self.bind_host,
+                self.bind_port,
+                limit=200000,
+            )
+            logging.info(
+                f"TCP server started on {self.bind_host}:{self.bind_port}"
+            )
+        else:
+            try:
+                os.unlink(self.uds_path)
+            except OSError:
+                if os.path.exists(self.uds_path):
+                    raise OSError(
+                        f"Could not remove existing UDS file {self.uds_path}. Please remove it manually."
+                    )
+            self.server = await asyncio.start_unix_server(
+                self._handle_client, self.uds_path, limit=200000
+            )
+            os.chmod(self.uds_path, 0o777)
+            logging.info(f"UDS server started on {self.uds_path}")
 
     async def serve(self) -> None:
         loop = asyncio.get_running_loop()
@@ -48,7 +68,7 @@ class UnixDomainSocketInferenceServer(abc.ABC):
         if self.server:
             self.server.close()
             await self.server.wait_closed()
-        if os.path.exists(self.uds_path):
+        if self.transport == "uds" and os.path.exists(self.uds_path):
             try:
                 os.unlink(self.uds_path)
             except OSError:
