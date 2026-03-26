@@ -535,20 +535,34 @@ class InferenceServer(UnixDomainSocketInferenceServer):
             logging.info(f"Loading model from {checkpoint_path}")
 
         self._setup_device()
-        dummy_trainer = pl.Trainer(
-            precision=config.shared.precision,
-            accelerator="gpu",
-            devices=[self.device_idx],
-        )
+        if "cuda" in str(self.device):
+            dummy_trainer = pl.Trainer(
+                precision=config.shared.precision,
+                accelerator="gpu",
+                devices=[self.device_idx],
+            )
+        elif self.device == "mps":
+            dummy_trainer = pl.Trainer(
+                precision="32-true",
+                accelerator="mps",
+                devices=1,
+            )
+        else:
+            dummy_trainer = pl.Trainer(
+                precision="32-true",
+                accelerator="cpu",
+                devices=1,
+            )
 
         # Use the dummy trainer to setup the precision, device when loading the model.
         with log_time("Stage3 model instantiation / checkpoint load"):
             with dummy_trainer.init_module():
                 if use_random_weights:
                     # Initialize model with random weights
+                    _dtype = torch.float32 if self.device in ("mps", "cpu") else torch.bfloat16
                     self.model = Stage3LabelledBCLightning(
                         config=config, inference_mode=True
-                    ).to(device="cuda", dtype=torch.bfloat16)
+                    ).to(device=self.device, dtype=_dtype)
                 else:
                     # Load model from checkpoint
                     self.model = Stage3LabelledBCLightning.load_from_checkpoint(
@@ -556,6 +570,8 @@ class InferenceServer(UnixDomainSocketInferenceServer):
                         config=config,
                         inference_mode=True,
                     )
+                    if self.device in ("mps", "cpu"):
+                        self.model = self.model.to(device=self.device, dtype=torch.float32)
         total_params, expert_params = count_model_parameters(self.model)
         logging.info(
             f"Total parameters: {total_params}, Expert parameters: {expert_params}"
@@ -592,33 +608,38 @@ class InferenceServer(UnixDomainSocketInferenceServer):
         # The warmup should have done all the compilation, so we should fail if we try to compile again.
         with log_time("FPS test"):
             with torch.compiler.set_stance(self._compile_stance):
-                self.fps_test(10_000)
+                self.fps_test(100)
 
         self.active_connections = set()
 
     def _setup_device(self):
-        # Only try and do inference on GPU.
-        assert torch.cuda.is_available()
-        cuda_devices = [
-            torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())
-        ]
-
-        device = None
-        # Try and find the first RTX 5090
-        for i, device_name in enumerate(cuda_devices):
-            if "RTX 5090" in device_name:
-                logging.info(f"Using GPU {i} ({device_name})")
-                device = f"cuda:{i}"
-                device_idx = i
-                break
-        if device is None and len(cuda_devices) == 1:
-            logging.warning(f"No RTX 5090 found, using first GPU: {cuda_devices[0]}")
-            device = "cuda:0"
-            device_idx = 0
-        elif device is None:
-            raise ValueError("No RTX 5090 found and multiple GPUs available.")
-        self.device = device
-        self.device_idx = device_idx
+        if torch.cuda.is_available():
+            cuda_devices = [
+                torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())
+            ]
+            device = None
+            for i, device_name in enumerate(cuda_devices):
+                if "RTX 5090" in device_name:
+                    logging.info(f"Using GPU {i} ({device_name})")
+                    device = f"cuda:{i}"
+                    device_idx = i
+                    break
+            if device is None and len(cuda_devices) == 1:
+                logging.warning(f"No RTX 5090 found, using first GPU: {cuda_devices[0]}")
+                device = "cuda:0"
+                device_idx = 0
+            elif device is None:
+                raise ValueError("No RTX 5090 found and multiple GPUs available.")
+            self.device = device
+            self.device_idx = device_idx
+        elif torch.backends.mps.is_available():
+            logging.info("Using MPS (Apple Silicon GPU)")
+            self.device = "mps"
+            self.device_idx = 0
+        else:
+            logging.warning("No GPU found, using CPU")
+            self.device = "cpu"
+            self.device_idx = 0
         logging.info(f"Using device: {self.device}")
 
     def fps_test(self, n_frames: int = 100):

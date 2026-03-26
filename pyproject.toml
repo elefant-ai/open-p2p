@@ -9,8 +9,8 @@ dependencies = [
     "boto3>=1.35.80",
     "flask-cors>=5.0.0",
     "flask>=3.1.0",
-    "torch; sys_platform != 'darwin' and platform_machine != 'aarch64'",
-    "torchvision; sys_platform != 'darwin' and platform_machine != 'aarch64'",
+    "torch",
+    "torchvision",
     "torchcodec>=0.6.0; sys_platform == 'linux'",
     "attrs>=24.2.0",
     "llvmlite>=0.44.0",
@@ -25,7 +25,7 @@ dependencies = [
     "funcy>=2.0",
     "tensordict>=0.6.2; sys_platform == 'linux'",
     "ruff>=0.8.4",
-    "torchinfo>=1.8.0; sys_platform != 'darwin'",
+    "torchinfo>=1.8.0",
     "jupyter-http-over-ws>=0.0.8",
     "google-api-python-client>=2.157.0",
     "google-generativeai>=0.8.3",
@@ -39,9 +39,9 @@ dependencies = [
     "pytest>=8.3.4",
     "pytest-rerunfailures>=14.0",
     "grpcio-tools>=1.70.0",
-    "torchmetrics>=1.6.1; sys_platform != 'darwin'",
+    "torchmetrics>=1.6.1",
     "protoletariat>=3.3.9",
-    "lightning>=2.5.0; sys_platform != 'darwin'",
+    "lightning>=2.5.0",
     "s3fs>=2025.2.0",
     "jsonlines>=4.0.0",
     "tensorboard>=2.19.0",
@@ -62,12 +62,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-model-export = [
-    "torch-tensorrt>=2.6.0; sys_platform == 'linux' or sys_platform == 'win32'",
-    "tensorrt>=10.7.0.post1; sys_platform == 'linux' or sys_platform == 'win32'",
-    "pycuda>=2025.1; sys_platform != 'darwin'",
-    "cuda-python>=12.8.0; sys_platform != 'darwin'",
-]
+model-export = []
 
 simulator = [
     "playwright>=1.52.0",
@@ -75,8 +70,6 @@ simulator = [
 
 [tool.uv]
 environments = [
-    "sys_platform == 'linux' and platform_machine == 'x86_64'",
-    "sys_platform == 'win32' and platform_machine == 'x86_64'",
     "sys_platform == 'darwin'",
 ]
 

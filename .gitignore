@@ -11,3 +11,4 @@ yt_videos/
 target
 data_folder/
 data_folder_validation/
+checkpoints/

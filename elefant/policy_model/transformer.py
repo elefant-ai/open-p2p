@@ -246,6 +246,11 @@ class SelfAttention(nn.Module):
             k = torch.cat([sink_k.expand(B, -1, -1, -1), k], dim=2)
             v = torch.cat([sink_v.expand(B, -1, -1, -1), v], dim=2)
 
+        if flex_attention_mask is not None and q.device.type == "mps":
+            # MPS does not support FlexAttention; fall back to SDPA with causal mask
+            flex_attention_mask = None
+            self.is_causal = True
+
         if flex_attention_mask is not None:
             # Assert that we're not using torch.compile with CPU when using flex_attention
             if q.device.type == "cpu" and torch.compiler.is_compiling():
