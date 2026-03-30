@@ -62,7 +62,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-model-export = []
+model-export = [
+    "torch-tensorrt>=2.6.0; sys_platform == 'linux' or sys_platform == 'win32'",
+    "tensorrt>=10.7.0.post1; sys_platform == 'linux' or sys_platform == 'win32'",
+    "pycuda>=2025.1; sys_platform != 'darwin'",
+    "cuda-python>=12.8.0; sys_platform != 'darwin'",
+]
 
 simulator = [
     "playwright>=1.52.0",
@@ -70,6 +75,8 @@ simulator = [
 
 [tool.uv]
 environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'win32' and platform_machine == 'x86_64'",
     "sys_platform == 'darwin'",
 ]
 
